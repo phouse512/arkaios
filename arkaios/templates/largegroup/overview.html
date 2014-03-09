@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+		<div class="col-lg-2 sidebar" data-spy="affix" data-offset-top="0" data-offset-bottom="0" id="sidebar">
+			<ul class="nav nav-sidebar">
+				<li class="active">
+					<a href="#">Overview</a>
+				</li>
+				<li>
+					<a href="#">Attendance</a>
+				</li>
+				<li>
+					<a href="#">Manage Events</a>
+				</li>
+				<li>
+					<a href="#">Create Event</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="col-lg-offset-2 col-lg-8" style="margin-top: 50px;">
+			{% for item in user -%}
+    			{{ item }}
+			{%- endfor %}
+		</div>
+
+{% endblock content %}

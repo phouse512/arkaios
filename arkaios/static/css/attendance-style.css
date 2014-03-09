@@ -1,0 +1,19 @@
+#attendance-navigation {
+	padding-top: 20px;
+	padding-left: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #ddd;
+	height: 75px;
+	margin-top: 50px;
+}
+
+#attendance-navigation p {
+	font-weight: 400;
+	padding-top: 10px;
+	padding-right: 20px;
+}
+
+#attendance-data {
+	height: 500px;
+	overflow: scroll;
+}
