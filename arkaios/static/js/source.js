@@ -4,14 +4,37 @@ function pageLoad(){
 	$(".nav-pills a").on("click", function(){
 		weekNavigation(parseInt($(this).html()));
 	});
+	$("#sortToggle a").on("click", function(){
+		sortToggle(parseInt($(this).attr("value")));
+	});
+	$("#siftToggle a").on("click", function(){
+		siftToggle(parseInt($(this).attr("value")));
+		console.log(parseInt($(this).attr("value")));
+	});
 }
 
 function weekNavigation(selectedWeek){
 	$(".nav-pills .active").removeClass("active");
 	new_selection = ".nav-pills li:nth-child(x)";
 	new_selection = new_selection.replace("x", selectedWeek+1);
-	console.log(new_selection);
 	$(new_selection).addClass("active");
+
+	reloadAttendanceTable();
+}
+
+function sortToggle(sortedToggle){
+	icon = $("#sortToggle i").remove();
+	new_sort = "#sortToggle li:nth-child(x) a";
+	new_sort = new_sort.replace("x", sortedToggle+1);
+	$(new_sort).prepend(icon);
+
+	reloadAttendanceTable();
+}
+
+function siftToggle(siftedToggle){
+	icon = $("#siftToggle i").remove();
+	new_sift = "#siftToggle a";
+	$($(new_sift)[siftedToggle]).prepend(icon);
 
 	reloadAttendanceTable();
 }
@@ -26,9 +49,10 @@ function reloadAttendanceTable(){
 	// build url for ajax call - feed input and get data
 	$.get($SCRIPT_ROOT + '/admin/large-group/_get_event_table', {
         quarter: currentQuarter,
-        week: weekNumber
+        week: weekNumber,
+        sort: sortToggleNumber,
+        sift: siftToggleNumber
 	}, function(data) {
-		console.log(data);
 		$("#attendance-data div").html(data);
 
 		//change the properties of the dropdowns

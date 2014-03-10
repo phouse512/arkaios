@@ -4,6 +4,8 @@ from flask import render_template, request, jsonify
 from arkaios.models import Base, User, LargeGroup, SmallGroup, SmallGroupEvent, Attendee, LargeGroupAttendance, SmallGroupEventAttendance
 from arkaios import config
 
+from sqlalchemy import desc
+
 app = Flask(__name__)
 app.config.from_object(config)
 
@@ -29,19 +31,36 @@ def large_group_attendance_admin(event_data):
 def large_group_attendance_table_admin():
 	quarter = request.args.get('quarter', "w14", type=str)
 	week = request.args.get('week', 1, type=int)
+	sort = request.args.get('sort', 0, type=int)
+	sift = request.args.get('sift', 0, type=int)
+
+	sortingDictionary = {0: LargeGroupAttendance.id, 1: Attendee.year, 2: Attendee.first_name, 3: Attendee.last_name }
 
 	# if event doesn't exist - catch the error and don't crash!!
 	try:
 		event_id = db.session.query(LargeGroup).filter_by(weekNumber=week).filter_by(quarter=quarter).first().id
-
-		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id)
-		return render_template('largegroup/_attendance_table.html', attendance=attendance_records)
-	
 	except AttributeError:
 		# no event was found - display nothing yo
 		return render_template('largegroup/_no_event_found.html')
-
-
+	
+	#sifting 
+	if(sift == 0):
+		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).join(LargeGroupAttendance.attendee).order_by(sortingDictionary[sort])
+	elif(sift == 1):
+		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).join(LargeGroupAttendance.attendee).filter_by(year="freshman").order_by(sortingDictionary[sort])
+	elif(sift == 2):
+		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).join(LargeGroupAttendance.attendee).filter_by(year="sophomore").order_by(sortingDictionary[sort])
+	elif(sift == 3):
+		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).join(LargeGroupAttendance.attendee).filter_by(year="junior").order_by(sortingDictionary[sort])	
+	elif(sift == 4):
+		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).join(LargeGroupAttendance.attendee).filter_by(year="senior").order_by(sortingDictionary[sort])	
+	elif(sift == 5):
+		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).join(LargeGroupAttendance.attendee).filter_by(year="other").order_by(sortingDictionary[sort])	
+	elif(sift == 6):
+		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).filter_by(first_time=1).join(LargeGroupAttendance.attendee).order_by(sortingDictionary[sort])
+	
+	return render_template('largegroup/_attendance_table.html', attendance=attendance_records)
+	
 # Attendance Tracking
 @app.route('/focus/<event_data>')
 def large_group(event_data):
