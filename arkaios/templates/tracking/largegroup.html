@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/tracking.css') }}" />
+        <title>{% block title %}{% endblock %}</title>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="{{ url_for('static', filename='js/tracking.js') }}"></script>
+        <script type=text/javascript>
+          $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+          $(document).ready(function(){
+            
+          });
+        </script>
+    </head>
+    <body class="large-group-tracking">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-4">
+                <h1>Welcome to Focus!</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div id="confirmation" class="col-lg-3 col-lg-offset-2 confirmation-image" style="display: none;">
+                <img src="{{ url_for('static', filename='img/checkmark.png') }}">
+            </div>
+            <div id="input-form" class="col-lg-3 col-lg-offset-2">
+                <input type="text" class="form-control" id="firstName" placeholder="first name..">
+                <input type="text" class="form-control" id="lastName" placeholder="last name..">
+                <input type="text" class="form-control" id="email" placeholder="email..">
+                <input type="text" class="form-control" id="dorm" placeholder="dorm..">
+                <select class="form-control">
+                    <option value="">choose..</option>
+                    <option value="freshman">Freshman</option>
+                    <option value="sophomore">Sophomore</option>
+                    <option value="junior">Junior</option>
+                    <option value="senior">Senior</option>
+                    <option value="other">Other</option>
+                </select>
+                <button id="submitAttendance" class="btn btn-block btn-primary">Submit</button>
+            </div>
+            <div class="col-lg-5">
+                <ul class="list-group">
+                    <li class="list-group-item">Test 1<span class="pull-right">Freshman</span></li>
+                    <li class="list-group-item">Test 2<span class="pull-right">Freshman</span></li>
+                    <li class="list-group-item">Test 3<span class="pull-right">Freshman</span></li>
+                    <li class="list-group-item">Test 4<span class="pull-right">Freshman</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="alert alert-info" id="trackingFooter">
+            You currently are tracking for event {{ quarter }}; return to the mothership now
+            <p id="quarter" style="display: none;">{{ quarter }}</p>
+            <p id="week" style="display: none;">{{ week }}</p>
+        </div>
+    </body>
+</html>

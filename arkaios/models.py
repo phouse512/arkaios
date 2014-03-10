@@ -85,7 +85,6 @@ class Attendee(Base):
 	dorm = Column(String(100))
 
 	def __init__(self, first_name, last_name, year, email, dorm):
-		self.name = name
 		self.first_name = first_name
 		self.last_name = last_name
 		self.year = year
@@ -100,6 +99,7 @@ class LargeGroupAttendance(Base):
 	__tablename__ = 'large_group_attendance'
 
 	id = Column(Integer, primary_key=True)
+	first_time = Column(Integer)
 
 	large_group_id = Column(Integer, ForeignKey('large_group.id'))
 	large_group = relationship("LargeGroup", backref=backref('large_group_attendance', order_by=id))
@@ -135,5 +135,7 @@ if __name__ == '__main__':
 
 	# Add a sample user
 	user = User(name='Philip House', password="test")
+	largegroup = LargeGroup(name='TestFocus', weekNumber=1, quarter="w14")
+	session.add(largegroup)
 	session.add(user)
 	session.commit()
