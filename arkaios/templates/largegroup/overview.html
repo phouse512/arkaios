@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Large Group Overview
+{% endblock title %}
+
 {% block content %}
 		<div class="col-lg-2 sidebar" data-spy="affix" data-offset-top="0" data-offset-bottom="0" id="sidebar">
 			<ul class="nav nav-sidebar">
@@ -10,7 +14,7 @@
 					<a href="{{ url_for('large_group_attendance_admin', event_data='w14') }}">Attendance</a>
 				</li>
 				<li>
-					<a href="#">Manage Events</a>
+					<a href="{{ url_for('large_group_manage') }}">Manage Events</a>
 				</li>
 				<li>
 					<a href="#">Create Event</a>

@@ -1,8 +1,10 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, make_response, Response
 from arkaios.models import Base, User, LargeGroup, SmallGroup, SmallGroupEvent, Attendee, LargeGroupAttendance, SmallGroupEventAttendance
 from arkaios import config
+
+import csv
 
 from sqlalchemy import desc
 
@@ -16,6 +18,21 @@ db.Model = Base
 def large_group_overview():
 	user = db.session.query(User).filter_by(id=1)
 	return render_template('largegroup/overview.html', user=user)
+
+# Large group manage - collect record counts
+@app.route('/admin/large-group/manage')
+def large_group_manage():
+
+	winter2014 = [0]*10
+	spring2014 = [0]*10
+	fall2014 = [0]*10
+
+	for i in range(10):
+		winter2014[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='w14').join(LargeGroup.large_group_attendance).count()
+		spring2014[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='s14').join(LargeGroup.large_group_attendance).count()
+		fall2014[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='f14').join(LargeGroup.large_group_attendance).count()
+	
+	return render_template('largegroup/manage.html', w14=winter2014, s14=spring2014, f14=fall2014)
 
 # Large Group Attendance Page
 @app.route('/admin/large-group/<event_data>')
@@ -33,8 +50,13 @@ def large_group_attendance_table_admin():
 	week = request.args.get('week', 1, type=int)
 	sort = request.args.get('sort', 0, type=int)
 	sift = request.args.get('sift', 0, type=int)
+	returnType = request.args.get('returnType', 0, type=int)
 
 	sortingDictionary = {0: LargeGroupAttendance.id, 1: Attendee.year, 2: Attendee.first_name, 3: Attendee.last_name }
+
+	# the ALL case of the page view - not implemented yet
+	if week == -1:
+		return render_template('largegroup/_full_attendance_table.html')
 
 	# if event doesn't exist - catch the error and don't crash!!
 	try:
@@ -59,13 +81,38 @@ def large_group_attendance_table_admin():
 	elif(sift == 6):
 		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).filter_by(first_time=1).join(LargeGroupAttendance.attendee).order_by(sortingDictionary[sort])
 	
-	return render_template('largegroup/_attendance_table.html', attendance=attendance_records)
-	
+	if returnType == 0:
+		return render_template('largegroup/_attendance_table.html', attendance=attendance_records)
+	else:
+		# first create
+		fullArray = [1]
+		columnDescription = ["Last Name", "First Name", "Email", "Dorm", "Year"]
+		fullArray[0] = columnDescription
+
+		for record in attendance_records:
+			temp = [record.attendee.last_name, record.attendee.first_name, record.attendee.email, record.attendee.dorm, record.attendee.year]
+			fullArray.append(temp)
+
+		def generate():
+			for row in fullArray:
+				yield ','.join(row) + '\n'
+
+		return Response(generate(), mimetype='text/csv')
+
 # Attendance Tracking
 @app.route('/focus/<event_data>')
 def large_group(event_data):
 	quarter = event_data.split("-")[0]
 	week = event_data.split("-")[1][1:]
+
+	try:
+		event_id = db.session.query(LargeGroup).filter_by(weekNumber=week).filter_by(quarter=quarter).first().id
+	except AttributeError:
+		# no event was found - display nothing yo
+		new_event = LargeGroup(quarter=quarter, weekNumber=week, name="Focus")
+		db.session.add(new_event)
+		db.session.commit()
+
 	return render_template('tracking/largegroup.html', quarter=quarter, week=week)
 
 @app.route('/focus/_track')

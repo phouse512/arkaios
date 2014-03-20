@@ -14,18 +14,18 @@
 					<a href="#">Attendance</a>
 					<div class="sidebar-dropdown row">
 						<div class="col-lg-10 col-lg-offset-1">
-							<button type="button" class="btn btn-info btn-block navbar-buttons">choose quarter..</button>
+							<button data-toggle="modal" data-target="#chooseQuarter" type="button" class="btn btn-info btn-block navbar-buttons">choose quarter..</button>
 						</div>
 						<div class="col-lg-10 col-lg-offset-1">
-							<button type="button" class="btn btn-info btn-block navbar-buttons">export event..</button>
+							<button type="button" class="btn btn-info btn-block navbar-buttons" id="exportEvent">export event..</button>
 						</div>
 					</div>
 				</li>
 				<li>
-					<a href="#">Manage Events</a>
+					<a href="{{ url_for('large_group_manage') }}">Manage Events</a>
 				</li>
 				<li>
-					<a href="#">Create Event</a>
+					<a href="">Create Event</a>
 				</li>
 			</ul>
 		</div>
@@ -35,16 +35,17 @@
 					<div class="col-lg-9">
 						<ul class="nav nav-pills">
 							<li><p><b>Current Quarter: </b> <span id="currentQuarter">{{ event_data }}</span><b> Week:</b><p></li>
-							<li class="active"><a href="#">1</a></li>
-							<li><a href="#">2</a></li>
-							<li><a href="#">3</a></li>
-							<li><a href="#">4</a></li>
-							<li><a href="#">5</a></li>
-							<li><a href="#">6</a></li>
-							<li><a href="#">7</a></li>
-							<li><a href="#">8</a></li>
-							<li><a href="#">9</a></li>
-							<li><a href="#">10</a></li>
+							<li class="active"><a value="1" href="#">1</a></li>
+							<li><a value="2" href="#">2</a></li>
+							<li><a value="3" href="#">3</a></li>
+							<li><a value="4" href="#">4</a></li>
+							<li><a value="5" href="#">5</a></li>
+							<li><a value="6" href="#">6</a></li>
+							<li><a value="7" href="#">7</a></li>
+							<li><a value="8" href="#">8</a></li>
+							<li><a value="9" href="#">9</a></li>
+							<li><a value="10" href="#">10</a></li>
+							<li><a value="-1" href="#">All</a></li>
 						</ul>
 					</div>
 					<div class="col-lg-3">
@@ -107,5 +108,29 @@
 			</div>
 		</div>
 		
+		<div class="modal fade" id="chooseQuarter" tabindex="-1" role="dialog" aria-labelledby="chooseQuarterLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="chooseQuarterLabel">Choose Quarter</h4>
+					</div>
+					<div class="modal-body">
+						<div class="list-group">
+							<a href="#" value="f13" class="list-group-item">Fall 2013</a>
+							<a href="#" value="w14" class="list-group-item">Winter 2014</a>
+							<a href="#" value="s14" class="list-group-item">Spring 2014</a>
+							<a href="#" value="f14" class="list-group-item">Fall 2014</a>
+							<a href="#" value="w15" class="list-group-item">Winter 2015</a>
+							<a href="#" value="s15" class="list-group-item">Spring 2015</a>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" id="selectQuarter" class="btn btn-primary">Select Quarter</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
  	{% endblock content %}
