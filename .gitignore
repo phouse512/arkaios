@@ -1,0 +1,5 @@
+#python specific
+*.pyc
+
+#generic
+*.DS_Store

@@ -49,7 +49,7 @@
             </div>
         </div>
         <div class="alert alert-info" id="trackingFooter">
-            You currently are tracking for event {{ quarter }}; return to the mothership now
+            You currently are tracking for event {{ quarter }}; return to the mothership <a href="{{ url_for('large_group_manage') }}">now</a>
             <p id="quarter" style="display: none;">{{ quarter }}</p>
             <p id="week" style="display: none;">{{ week }}</p>
         </div>
