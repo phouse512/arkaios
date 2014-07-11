@@ -19,10 +19,14 @@ Large Group Overview
 			</ul>
 		</div>
 
-		<div class="col-lg-offset-2 col-lg-8" style="margin-top: 50px;">
-			{% for item in user -%}
-    			{{ item.name }}
-			{%- endfor %}
+		<div id="overview-data" class="col-lg-offset-2 col-lg-8" style="margin-top: 50px;">
+
 		</div>
+
+        <script type=text/javascript>
+			$(document).ready(function(){
+				largeGroupOverviewPageLoad();
+			});
+        </script>
 
 {% endblock content %}

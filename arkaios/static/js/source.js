@@ -1,4 +1,4 @@
-function pageLoad(){
+function largeGroupAttendancePageLoad(){
 	reloadAttendanceTable();
 	// pill navigation listeners
 	$(".nav-pills a").on("click", function(){
@@ -93,6 +93,15 @@ function reloadAttendanceTable(type){
 
 		//change the week currently selected
 	});
+}
+
+function loadOverviewTable(){
+	$.get($SCRIPT_ROOT + '/admin/large-group/_get_overview_table', {
+		quarter: 'w14'
+	}, function(data) {
+		$("#overview-data").html(data);
+	});
+
 }
 
 function downloadCSV(){

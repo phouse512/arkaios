@@ -12,7 +12,7 @@
         <script type=text/javascript>
           $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
           $(document).ready(function(){
-            pageLoad();
+            console.log($SCRIPT_ROOT);
           });
         </script>
     </head>

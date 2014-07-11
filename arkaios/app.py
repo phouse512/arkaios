@@ -3,10 +3,12 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask import render_template, request, jsonify, make_response, Response
 from arkaios.models import Base, User, LargeGroup, SmallGroup, SmallGroupEvent, Attendee, LargeGroupAttendance, SmallGroupEventAttendance
 from arkaios import config
+from arkaios import helpers
 
 import csv
 
 from sqlalchemy import desc
+from sqlalchemy.orm import load_only
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -16,13 +18,46 @@ db.Model = Base
 
 @app.route('/admin/large-group/')
 def large_group_overview():
-	user = db.session.query(User).filter_by(id=1)
-	return render_template('largegroup/overview.html', user=user)
+	userCount = db.session.query(Attendee).count()
+
+
+
+	#print type(users)
+	return render_template('largegroup/overview.html')
+
+@app.route('/admin/large-group/_get_overview_table')
+def large_group_overview_table_admin():
+	userCount = db.session.query(Attendee).count();
+
+	selectedQuarter = "w14"
+	attendanceArray = [[0 for i in range(10)] for j in range(userCount)]
+	users = db.session.query(Attendee).options(load_only("id", "first_name", "last_name", "year"))
+	weeks = db.session.query(LargeGroup).filter_by(quarter=selectedQuarter).options(load_only("id"))
+
+	userCount = 0
+	weekCount = 0
+	for user in users:
+		for week in weeks:
+			try:
+				val = db.session.query(LargeGroupAttendance).filter_by(large_group_id=week.id).filter_by(attendee_id=user.id).first()
+				print "value first time: " + str(val.first_time) + " value.count(): " + str(val.count())
+				if(val.first_time == 1):
+					attendanceArray[userCount][weekCount] = 2
+				elif(val.count() == 1):
+					attendanceArray[userCount][weekCount] = 1
+				else:
+					attendanceArray[userCount][weekCount] = 0
+			except AttributeError,e:
+				print str(e)
+				attendanceArray[userCount][weekCount] = 0
+			weekCount += 1
+		userCount += 1
+		weekCount = 0
+	return render_template('largegroup/_overview_table.html', attendance=attendanceArray)
 
 # Large group manage - collect record counts
 @app.route('/admin/large-group/manage')
 def large_group_manage():
-
 	winter2014 = [0]*10
 	spring2014 = [0]*10
 	fall2014 = [0]*10
@@ -31,7 +66,7 @@ def large_group_manage():
 		winter2014[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='w14').join(LargeGroup.large_group_attendance).count()
 		spring2014[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='s14').join(LargeGroup.large_group_attendance).count()
 		fall2014[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='f14').join(LargeGroup.large_group_attendance).count()
-	
+
 	return render_template('largegroup/manage.html', w14=winter2014, s14=spring2014, f14=fall2014)
 
 # Large Group Attendance Page
@@ -97,7 +132,7 @@ def large_group_attendance_table_admin():
 			for row in fullArray:
 				yield ','.join(row) + '\n'
 
-		return Response(generate(), mimetype='text/csv')
+		return Response(generate(), mimetype='text/csv', headers={"Content-Disposition":"attachment;filename=" + helpers.parseFileName(quarter, week)})
 
 # Attendance Tracking
 @app.route('/focus/<event_data>')
