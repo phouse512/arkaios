@@ -19,10 +19,6 @@ db.Model = Base
 @app.route('/admin/large-group/')
 def large_group_overview():
 	userCount = db.session.query(Attendee).count()
-
-
-
-	#print type(users)
 	return render_template('largegroup/overview.html')
 
 @app.route('/admin/large-group/_get_overview_table')
@@ -31,29 +27,37 @@ def large_group_overview_table_admin():
 
 	selectedQuarter = "w14"
 	attendanceArray = [[0 for i in range(10)] for j in range(userCount)]
+	weeks = [range(11)]
 	users = db.session.query(Attendee).options(load_only("id", "first_name", "last_name", "year"))
-	weeks = db.session.query(LargeGroup).filter_by(quarter=selectedQuarter).options(load_only("id"))
+	weeked = db.session.query(LargeGroup).filter_by(quarter="w14").options(load_only("id"))
 
 	userCount = 0
 	weekCount = 0
+	print weeks[0]
 	for user in users:
 		for week in weeks:
 			try:
 				val = db.session.query(LargeGroupAttendance).filter_by(large_group_id=week.id).filter_by(attendee_id=user.id).first()
-				print "value first time: " + str(val.first_time) + " value.count(): " + str(val.count())
+				print val
+				print "week: " + str(week.id) + " user: " + str(user.id)
+				#print "value first time: " + str(val.first_time) + " value.count(): " + str(val.count())
+				#first time case
 				if(val.first_time == 1):
 					attendanceArray[userCount][weekCount] = 2
-				elif(val.count() == 1):
+				#normal attendee case
+				elif(val is not None):
 					attendanceArray[userCount][weekCount] = 1
+				# no attendance case
 				else:
 					attendanceArray[userCount][weekCount] = 0
 			except AttributeError,e:
+				# if doesn't exist, assume no attendance
 				print str(e)
 				attendanceArray[userCount][weekCount] = 0
 			weekCount += 1
 		userCount += 1
 		weekCount = 0
-	return render_template('largegroup/_overview_table.html', attendance=attendanceArray)
+	return render_template('largegroup/_overview_table.html', attendance=attendanceArray, userInfo=users)
 
 # Large group manage - collect record counts
 @app.route('/admin/large-group/manage')
