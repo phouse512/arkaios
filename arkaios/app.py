@@ -23,24 +23,39 @@ def large_group_overview():
 
 @app.route('/admin/large-group/_get_overview_table')
 def large_group_overview_table_admin():
-	userCount = db.session.query(Attendee).count();
+	sortingDictionary = {0: Attendee.id, 1: Attendee.year, 2: Attendee.first_name, 3: Attendee.last_name }
+	siftingDictionary = {1: "freshman", 2: "sophomore", 3: "junior", 4: "senior", 5: "other" }
 
-	selectedQuarter = "w14"
+	# get params
+	quarter = request.args.get('quarter', "w14", type=str)
+	sort = request.args.get('sort', 0, type=int)
+	sift = request.args.get('sift', 0, type=int)
+
+	weeks = [0 for i in range(10)]
+	years = 'freshman'
+	if (sift == 0):
+		users = db.session.query(Attendee).order_by(sortingDictionary[sort]).options(load_only("id", "first_name", "last_name", "year"))
+		userCount = db.session.query(Attendee).order_by(sortingDictionary[sort]).options(load_only("id", "first_name", "last_name", "year")).count()
+	else:
+		users = db.session.query(Attendee).filter_by(year=siftingDictionary[sift]).order_by(sortingDictionary[sort]).options(load_only("id", "first_name", "last_name", "year"))
+		userCount = db.session.query(Attendee).filter_by(year=siftingDictionary[sift]).order_by(sortingDictionary[sort]).options(load_only("id", "first_name", "last_name", "year")).count()
+
 	attendanceArray = [[0 for i in range(10)] for j in range(userCount)]
-	weeks = [range(11)]
-	users = db.session.query(Attendee).options(load_only("id", "first_name", "last_name", "year"))
-	weeked = db.session.query(LargeGroup).filter_by(quarter="w14").options(load_only("id"))
+	weekDB = db.session.query(LargeGroup).filter_by(quarter=quarter).options(load_only("id"))
 
-	userCount = 0
-	weekCount = 0
-	print weeks[0]
+	# set up full quarter week array with db ID's if exists, 0 otherwise
+	for week in weekDB:
+		try:
+			weeks[int(week.weekNumber)-1] = week.id
+		except ValueError,e:
+			print str(e)
+	print weeks
+	userCount, weekCount = 0, 0
+	# iterate through full overview table
 	for user in users:
 		for week in weeks:
 			try:
-				val = db.session.query(LargeGroupAttendance).filter_by(large_group_id=week.id).filter_by(attendee_id=user.id).first()
-				print val
-				print "week: " + str(week.id) + " user: " + str(user.id)
-				#print "value first time: " + str(val.first_time) + " value.count(): " + str(val.count())
+				val = db.session.query(LargeGroupAttendance).filter_by(large_group_id=week).filter_by(attendee_id=user.id).first()
 				#first time case
 				if(val.first_time == 1):
 					attendanceArray[userCount][weekCount] = 2
@@ -57,6 +72,7 @@ def large_group_overview_table_admin():
 			weekCount += 1
 		userCount += 1
 		weekCount = 0
+	print attendanceArray
 	return render_template('largegroup/_overview_table.html', attendance=attendanceArray, userInfo=users)
 
 # Large group manage - collect record counts

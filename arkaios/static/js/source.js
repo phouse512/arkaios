@@ -1,3 +1,4 @@
+// large group attendance page initializer
 function largeGroupAttendancePageLoad(){
 	reloadAttendanceTable();
 	// pill navigation listeners
@@ -9,7 +10,6 @@ function largeGroupAttendancePageLoad(){
 	});
 	$("#siftToggle a").on("click", function(){
 		siftToggle(parseInt($(this).attr("value")));
-		console.log(parseInt($(this).attr("value")));
 	});
 	$("#exportEvent").on("click", function(){
 		downloadCSV();
@@ -54,6 +54,8 @@ function weekNavigation(selectedWeek){
 	reloadAttendanceTable();
 }
 
+// On changes to the sort/sift toggles, these two functions receive which one 
+// fired and modify the view/data accordingly
 function sortToggle(sortedToggle){
 	icon = $("#sortToggle i").remove();
 	new_sort = "#sortToggle li:nth-child(x) a";
@@ -71,7 +73,9 @@ function siftToggle(siftedToggle){
 	reloadAttendanceTable();
 }
 
-// reloads the data table based on whatever criteria is there
+
+
+// reloads the attendance data table based on whatever criteria is there
 function reloadAttendanceTable(type){
 	// harvest currently selected properties
 	currentQuarter = $("#currentQuarter").html();
@@ -88,20 +92,7 @@ function reloadAttendanceTable(type){
         returnType: 0
 	}, function(data) {
 		$("#attendance-data div").html(data);
-
-		//change the properties of the dropdowns
-
-		//change the week currently selected
 	});
-}
-
-function loadOverviewTable(){
-	$.get($SCRIPT_ROOT + '/admin/large-group/_get_overview_table', {
-		quarter: 'w14'
-	}, function(data) {
-		$("#overview-data").html(data);
-	});
-
 }
 
 function downloadCSV(){
@@ -113,8 +104,6 @@ function downloadCSV(){
 	url = $SCRIPT_ROOT + "/admin/large-group/_get_event_table?quarter=" + currentQuarter + "&week=" + weekNumber + "&sort=" + sortToggleNumber + "&sift=" + siftToggleNumber + "&returnType=1";
 	window.location.replace(url);
 }
-
-
 
 function downloadTable(){
 	currentQuarter = $("#currentQuarter").html();
@@ -136,3 +125,65 @@ function downloadTable(){
 		//change the week currently selected
 	});
 }
+
+///////////////////////////////////////
+//                                   //
+//    Large Group Overview Code      //
+//                                   //
+///////////////////////////////////////
+
+//loads the the overview data table
+function loadOverviewTable(){
+	selectedQuarter = $(".nav-pills .active a").attr("value");
+	sortToggleNumber = parseInt($("#sortToggle i").parent().attr("value"));
+	siftToggleNumber = parseInt($("#siftToggle i").parent().attr("value"));
+
+	$.get($SCRIPT_ROOT + '/admin/large-group/_get_overview_table', {
+		quarter: selectedQuarter,
+		sort: sortToggleNumber,
+		sift: siftToggleNumber
+	}, function(data) {
+		$("#overview-data").html(data);
+	});
+}
+
+// large group overview page initializer
+function largeGroupOverviewPageLoad(){
+	loadOverviewTable();
+
+	$(".nav-pills a").on("click", function(){
+		chooseQuarterHandlerOverview($(this).attr("value"));
+	});
+
+	$("#sortToggle a").on("click", function(){
+		sortHandlerOverview(parseInt($(this).attr("value")));
+	});
+
+	$("#siftToggle a").on("click", function(){
+		siftHandlerOverview(parseInt($(this).attr("value")));
+	});
+}
+
+// Data Modifier Handlers
+function chooseQuarterHandlerOverview(quarter){
+	$(".nav-pills .active").removeClass("active");
+	$("[value='" + quarter + "']").parent().addClass('active');
+	loadOverviewTable();
+}
+
+function sortHandlerOverview(sortValue){
+	icon = $("#sortToggle i").remove();
+	new_sort = "#sortToggle li:nth-child(x) a";
+	new_sort = new_sort.replace("x", sortValue+1);
+	$(new_sort).prepend(icon);
+	largeGroupOverviewPageLoad();
+}
+
+function siftHandlerOverview(siftValue){
+	icon = $("#siftToggle i").remove();
+	new_sift = "#siftToggle a";
+	$($(new_sift)[siftValue]).prepend(icon);
+	console.log(siftValue);
+	largeGroupOverviewPageLoad();
+}
+

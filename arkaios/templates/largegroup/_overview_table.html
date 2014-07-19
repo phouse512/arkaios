@@ -18,7 +18,7 @@
 			<td>{{ userInfo[loop.index0].first_name }} {{ userInfo[loop.index0].last_name }}</td>
 			<td>{{ userInfo[loop.index0].year }} </td>
 			{% for attendanceDataPoint in userRecord %}
-				<td>{{ attendanceDataPoint }}</td>
+				<td class="{% if attendanceDataPoint == 2 %}info{% elif attendanceDataPoint == 1 %}success{% else %}danger{% endif %}">{{ attendanceDataPoint }}</td>
 			{% endfor %}
 		</tr>
 	{% endfor %}

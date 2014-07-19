@@ -16,3 +16,17 @@
 	height: 500px;
 	overflow: scroll;
 }
+
+#overview-navigation {
+	padding-top: 20px;
+	padding-left: 20px;
+	height: 75px;
+	margin-top: 50px;
+	padding-bottom: 20px;
+}
+
+#overview-navigation p {
+	font-weight: 400;
+	padding-top: 10px;
+	padding-right: 20px;
+}
