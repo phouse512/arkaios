@@ -17,6 +17,11 @@
 	overflow: scroll;
 }
 
+#overview-data {
+	height: 350px;
+	overflow: scroll;
+}
+
 #overview-navigation {
 	padding-top: 20px;
 	padding-left: 20px;

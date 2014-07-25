@@ -73,8 +73,6 @@ function siftToggle(siftedToggle){
 	reloadAttendanceTable();
 }
 
-
-
 // reloads the attendance data table based on whatever criteria is there
 function reloadAttendanceTable(type){
 	// harvest currently selected properties
@@ -119,10 +117,7 @@ function downloadTable(){
         returnType: 1
 	}, function(data) {
 		console.log(data);
-
-		//change the properties of the dropdowns
-
-		//change the week currently selected
+		console.log(pieChartData);
 	});
 }
 
@@ -162,6 +157,8 @@ function largeGroupOverviewPageLoad(){
 	$("#siftToggle a").on("click", function(){
 		siftHandlerOverview(parseInt($(this).attr("value")));
 	});
+
+	displayAttendanceGraphs("hi", pieChartData);
 }
 
 // Data Modifier Handlers
@@ -185,5 +182,36 @@ function siftHandlerOverview(siftValue){
 	$($(new_sift)[siftValue]).prepend(icon);
 	console.log(siftValue);
 	largeGroupOverviewPageLoad();
+}
+
+// Graphing functions
+
+function displayAttendanceGraphs(quarter, pieChart){
+	//dummy var
+	quarter = 'w14'
+	var graphData = {
+		labels: ['Week 1','Week 2','Week 3','Week 4','Week 5','Week 6','Week 7','Week 8','Week 9','Week 10'],
+		datasets: [
+			{
+				label: 'Week Number',
+	            fillColor: "rgba(151,187,205,0.5)",
+	            strokeColor: "rgba(151,187,205,0.8)",
+	            highlightFill: "rgba(151,187,205,0.75)",
+	            highlightStroke: "rgba(151,187,205,1)"
+	        }
+		]
+	};
+	$.get($SCRIPT_ROOT + '/admin/large-group/_get_overview_graphs/' + quarter, function(data){
+		graphData.datasets[0].data = data.week;
+		var ctx = document.getElementById("weekly-attendance-graph").getContext("2d");
+		var attendanceBarChart = new Chart(ctx).Bar(graphData);
+
+		for(var i=0; i < pieChart.length; i++){
+			pieChart[i].value = data.year[i];
+		}
+
+		var ctx2 = document.getElementById("class-attendance-graph").getContext("2d");
+		var attendancePieChart = new Chart(ctx2).Doughnut(pieChart);
+	});
 }
 

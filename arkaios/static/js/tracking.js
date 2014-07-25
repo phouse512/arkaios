@@ -41,9 +41,23 @@ function submitClick(){
 function parseTrackingStatus(data){
 	if(data.status=="error"){
 		console.log("error");
+
+		//add error handling
 	} else if(data.status=="success") {
-		console.log("success yo");
 		resetScreen();
 		displayConfirmation();
 	}	
+}
+
+function searchUsers(){
+	$.getJSON($SCRIPT_ROOT + 'focus/_search', {
+		firstName: $('#firstName').val(),
+		lastName: $('#lastName').val(),
+		email: $("#email").val(),
+		dorm: $("#dorm").val(),
+		year: $('select').val()
+	}, function(data) {
+		console.log(data);
+
+	});
 }
