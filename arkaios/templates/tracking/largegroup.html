@@ -4,7 +4,8 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/tracking.css') }}" />
         <title>{% block title %}Focus Attendance{% endblock %}</title>
-        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/jquery.updatelist.js') }}"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
         <script src="{{ url_for('static', filename='js/tracking.js') }}"></script>
         <script type=text/javascript>
@@ -41,10 +42,10 @@
             </div>
             <div class="col-lg-5">
                 <ul class="list-group">
-                    <li class="list-group-item">Test 1<span class="pull-right">Freshman</span></li>
-                    <li class="list-group-item">Test 2<span class="pull-right">Freshman</span></li>
-                    <li class="list-group-item">Test 3<span class="pull-right">Freshman</span></li>
-                    <li class="list-group-item">Test 4<span class="pull-right">Freshman</span></li>
+                    <li id="1" class="list-group-item">Test 1<span class="pull-right">Freshman</span></li>
+                    <li id="4" class="list-group-item">Test 4<span class="pull-right">Freshman</span></li>
+                    <li id="3" class="list-group-item">Test 3<span class="pull-right">Freshman</span></li>
+                    <li id="6" class="list-group-item">Test 6<span class="pull-right">Freshman</span></li>
                 </ul>
             </div>
         </div>

@@ -7,9 +7,11 @@
         <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
         <title>{% block title %}{% endblock %}</title>
         <script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/jquery.updatelist.js') }}"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/constants.js') }}"></script>
         <script src="{{ url_for('static', filename='js/source.js') }}"></script>
+
 
         <script type=text/javascript>
           $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
