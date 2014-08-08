@@ -112,19 +112,24 @@
         update: function(newArray) {
             console.log('update');
 
-            idList = [];
-            for(var i=0; i < newArray.length; i++){
-                idList.push(parseInt(newArray[i].id));
+            idList = new Array(newArray.length);
+            console.log("length: " + newArray[0].length);
+            for(var i=0; i < newArray[0].length; i++){
+                console.log(newArray[0][i].id);
+                idList.push(parseInt(newArray[0][i].id));
             }
 
-            console.log(idList);
+            //console.log(idList);
 
-            this.item.find("li").each(function(){
-                console.log($(this).attr("id"));
-                if($.inArray($(this).attr("id"), idList) >= 0){
+            $("li").each(function(){
+                //console.log(parseInt($(this).attr("id")));
+
+                //console.log($.inArray(parseInt($(this).attr("id")), idList));
+
+                if($.inArray(parseInt($(this).attr("id")), idList) >= 0){
                     console.log('in');
                 } else {
-                    $(this).slideUp('slow');
+                    //console.log('out');
                 }
 
             });
