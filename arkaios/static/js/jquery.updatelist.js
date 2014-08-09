@@ -94,50 +94,58 @@
 
 
     defaultOptions = {
-        defaultId: 'selective_update_'
+        defaultId: 'selective_update_',
+        listSelector: 'li'
     };
 
     function UpdateList(item, options) {
         this.options = $.extend(defaultOptions, options);
         this.item = $(item);
         this.init();
+        console.log(this.options);
     }
     UpdateList.prototype = {
         init: function() {
             console.log('initiation');
         },
         template: function(template) {
-            this.template = template
+            this.template = template;
         },
         update: function(newArray) {
             console.log('update');
 
-            idList = new Array(newArray.length);
-            console.log("length: " + newArray[0].length);
+            idList = [];
             for(var i=0; i < newArray[0].length; i++){
-                console.log(newArray[0][i].id);
                 idList.push(parseInt(newArray[0][i].id));
             }
 
-            //console.log(idList);
-
-            $("li").each(function(){
-                //console.log(parseInt($(this).attr("id")));
-
-                //console.log($.inArray(parseInt($(this).attr("id")), idList));
-
-                if($.inArray(parseInt($(this).attr("id")), idList) >= 0){
-                    console.log('in');
+            $(this.options.listSelector).each(function(){
+                position = $.inArray(parseInt($(this).attr("id")), idList)
+                if(position < 0){
+                    $(this).slideUp('slow',function(){
+                        $(this).remove();
+                    });
                 } else {
-                    //console.log('out');
+                    idList.splice(position,1);
+                    newArray[0].splice(position,1);
                 }
-
             });
-            //scan through current, if current not in new
-                // delete
-                //if current is in new, remove from new
+
+            console.log(buildTemplate(this.template, newArray));
+
             // add remaining new
         }
+    }
+
+    function buildTemplate(template, id_prefix, data){
+        for (var key in data) {
+            if (data.hasOwnProperty(key) && key != 'id') {
+                template = template.replace('{' + key + '}', data[key]);
+            }
+        }
+        object = $.parseHTML(template);
+        $(object).attr("id", id_prefix + String(data.id));
+        return object;
     }
 
     // jQuery plugin interface
@@ -152,9 +160,11 @@
             } else {
                 // if instance already created call method
                 if(typeof opt === 'string') {
+                    console.log("pre call: " + opt);
+                    console.log("\nArgs: " + args);
+                    console.log(instance);
                     instance[opt](args);
-                    console.log("Args: " + args);
-                    console.log("opt: " + opt);
+
                 }
             }
         });
