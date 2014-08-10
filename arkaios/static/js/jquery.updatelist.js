@@ -131,7 +131,10 @@
                 }
             });
 
-            console.log(buildTemplate(this.template, this.options.defaultId, newArray));
+            for(var i=0; i < newArray[0].length; i++){
+                console.log(buildTemplate(this.template[0], this.options.defaultId, newArray[0][i]));
+                $(this.item).append(buildTemplate(this.template[0], this.options.defaultId, newArray[0][i]));
+            }
 
             // add remaining new
         }
@@ -139,17 +142,12 @@
 
     function buildTemplate(template, id_prefix, data){
         console.log('id prefix: ' + id_prefix);
-        console.log(data);
-        console.log(data[0]);
-        for (var key in data[0]) {
-            console.log('key: ' + key);
+        for(var key in data) {
             if (data.hasOwnProperty(key) && key != 'id') {
                 template = template.replace('{' + key + '}', data[key]);
             }
         }
-        console.log(template);
         object = $.parseHTML(template);
-        console.log(object);
         $(object).attr("id", id_prefix + String(data.id));
         return object;
     }
