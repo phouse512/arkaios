@@ -131,19 +131,25 @@
                 }
             });
 
-            console.log(buildTemplate(this.template, newArray));
+            console.log(buildTemplate(this.template, this.options.defaultId, newArray));
 
             // add remaining new
         }
     }
 
     function buildTemplate(template, id_prefix, data){
-        for (var key in data) {
+        console.log('id prefix: ' + id_prefix);
+        console.log(data);
+        console.log(data[0]);
+        for (var key in data[0]) {
+            console.log('key: ' + key);
             if (data.hasOwnProperty(key) && key != 'id') {
                 template = template.replace('{' + key + '}', data[key]);
             }
         }
+        console.log(template);
         object = $.parseHTML(template);
+        console.log(object);
         $(object).attr("id", id_prefix + String(data.id));
         return object;
     }
