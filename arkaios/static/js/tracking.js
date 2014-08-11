@@ -76,7 +76,10 @@ function updateSuggestions(data){
 }
 
 function updateSuggestionsListener(){
-	$("input").focusout(function() {
+	$("input").change(function() {
+		searchUsers();
+	});
+	$("select").change(function() {
 		searchUsers();
 	});
 }
