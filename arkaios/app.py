@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask import render_template, request, jsonify, make_response, Response
@@ -8,7 +11,7 @@ from arkaios import helpers
 import csv
 import json
 
-from sqlalchemy import desc
+from sqlalchemy import desc, and_
 from sqlalchemy.orm import load_only
 
 app = Flask(__name__)
@@ -247,7 +250,8 @@ def large_group_attendance_tracking():
 				status = "success"
 		else:	
 			# if user dne
-			new_user = Attendee(first_name=inputFirstName, last_name=inputLastName, year=inputYear, email=inputEmail, dorm=inputDorm)
+			new_user = Attendee(first_name=inputFirstName, last_name=inputLastName, 
+					year=inputYear, email=inputEmail, dorm=inputDorm)
 			db.session.add(new_user)
 			db.session.commit()
 			new_attendance = LargeGroupAttendance(large_group_id=event_id, attendee_id=new_user.id, first_time=1)
@@ -259,8 +263,24 @@ def large_group_attendance_tracking():
 
 @app.route('/focus/_search')
 def large_group_attendance_search():
+	inputFirstName = request.args.get('firstName')
+	inputLastName = request.args.get('lastName')
+	inputEmail = request.args.get('email')
+	inputDorm = request.args.get('dorm')
+	inputYear = request.args.get('year')
 
-	return None
+	sql = helpers.searchConstruction({'first_name': inputFirstName, 'last_name': inputLastName, 
+			'email': inputEmail, 'dorm': inputDorm, 'year': inputYear})
+
+	print sql
+	query = db.session.query(Attendee).filter(eval(sql))
+	
+	output = []
+	for record in query:
+		output.append(json.dumps({'id': record.id, 'firstname': record.first_name, 
+				'lastname': record.last_name, 'year': record.year}))
+
+	return jsonify(results=output)
 
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')

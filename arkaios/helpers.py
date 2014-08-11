@@ -1,11 +1,17 @@
 def parseFileName(quarter, week):
 	if(quarter[:1] == 's'):
-		wholeQuarter = "spring_20" + quarter[1:]
-
+		wholeQuarter = "spring_20%s" % quarter[1:]
 	elif(quarter[:1] == 'w'):
-		wholeQuarter = "winter_20" + quarter[1:]
+		wholeQuarter = "winter_20%s" % quarter[1:]
 	else:
-		wholeQuarter = "fall_20" + quarter[1:]
+		wholeQuarter = "fall_20%s" % quarter[1:]
 
-	filename = wholeQuarter + "_week_" + str(week) + ".csv"
-	return filename
+	return '%s_week_%s.csv' % (wholeQuarter, str(week))
+
+def searchConstruction(inputDict):
+	sql = []
+	for key in inputDict:
+		if inputDict[key]:
+			sql.append("Attendee.{}.like('%{}%')".format(str(key), inputDict[key]))
+
+	return 'and_(%s)' % ", ".join(sql)

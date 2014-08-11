@@ -2,6 +2,10 @@ function loadPage(){
 	$("#submitAttendance").on("click", function(){
 		submitClick();
 	});
+
+	$(".list-group").updateList({}).updateList('template', 
+			'<li class="list-group-item">{firstname} {lastname}<span class="pull-right">{year}</span></li>');
+	updateSuggestionsListener();
 }
 
 function displayConfirmation(){
@@ -50,14 +54,29 @@ function parseTrackingStatus(data){
 }
 
 function searchUsers(){
-	$.getJSON($SCRIPT_ROOT + 'focus/_search', {
+	$.getJSON($SCRIPT_ROOT + '/focus/_search', {
 		firstName: $('#firstName').val(),
 		lastName: $('#lastName').val(),
 		email: $("#email").val(),
 		dorm: $("#dorm").val(),
 		year: $('select').val()
 	}, function(data) {
-		console.log(data);
+		updateSuggestions(data);
 
+	});
+}
+
+function updateSuggestions(data){
+	for(var i=0; i<data.results.length; i++){
+		data.results[i] = JSON.parse(data.results[i]);
+	}
+	console.log(data.results);
+
+	$(".list-group").updateList('update', data.results);
+}
+
+function updateSuggestionsListener(){
+	$("input").focusout(function() {
+		searchUsers();
 	});
 }
