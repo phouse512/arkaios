@@ -261,6 +261,8 @@ def large_group_attendance_tracking():
 
 	return jsonify(status=status, error=errorArray)
 
+
+# auto suggester for focus
 @app.route('/focus/_search')
 def large_group_attendance_search():
 	inputFirstName = request.args.get('firstName')
@@ -271,14 +273,13 @@ def large_group_attendance_search():
 
 	sql = helpers.searchConstruction({'first_name': inputFirstName, 'last_name': inputLastName, 
 			'email': inputEmail, 'dorm': inputDorm, 'year': inputYear})
-
-	print sql
 	query = db.session.query(Attendee).filter(eval(sql))
 	
 	output = []
 	for record in query:
 		output.append(json.dumps({'id': record.id, 'firstname': record.first_name, 
-				'lastname': record.last_name, 'year': record.year}))
+				'lastname': record.last_name, 'year': record.year, 'dorm': record.dorm, 
+				'email': record.email}))
 
 	return jsonify(results=output)
 

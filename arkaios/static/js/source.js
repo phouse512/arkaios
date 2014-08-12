@@ -180,7 +180,6 @@ function siftHandlerOverview(siftValue){
 	icon = $("#siftToggle i").remove();
 	new_sift = "#siftToggle a";
 	$($(new_sift)[siftValue]).prepend(icon);
-	console.log(siftValue);
 	largeGroupOverviewPageLoad();
 }
 

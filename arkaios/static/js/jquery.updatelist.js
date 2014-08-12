@@ -16,6 +16,10 @@
             template: function(templateSkeleton) {
                 this.templateSkeleton = templateSkeleton[0];
             },
+            listener: function(newListener) {
+                this.elementListener = newListener[0];
+                console.log(newListener[0]);
+            },
             update: function(newArray) {
                 idList = [];
                 for(var i=0; i < newArray[0].length; i++){
@@ -26,7 +30,7 @@
                     position = $.inArray(parseInt($(this).attr("id").replace(prefix, '')), idList)
                     if(position < 0){
                         $(this).slideUp('slow',function(){
-                            $(this).remove();
+                            $(this).off().remove();
                         });
                     } else {
                         idList.splice(position,1);
@@ -35,8 +39,9 @@
                 });
 
                 for(var i=0; i < newArray[0].length; i++){
-                    $(buildTemplate(this.templateSkeleton, this.options.defaultId, newArray[0][i])).appendTo($(this.item))
-                            .slideDown("slow");
+                    newObject = buildTemplate(this.templateSkeleton, this.options.defaultId, newArray[0][i]);
+                    $(newObject).appendTo($(this.item)).slideDown("slow");
+                    (this.elementListener) ? this.elementListener(newObject) : console.log('no event listener set');
                 }
             }
         }
