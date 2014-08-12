@@ -4,9 +4,9 @@ function loadPage(){
 	});
 
 	$(".list-group").updateList({}).updateList('template', 
-			'<li class="list-group-item">{firstname} {lastname}' + 
-			'<span class="pull-right">{year}<input class="dorm" type="hidden" name="dorm" value="{dorm}">' + 
-			'<input type="hidden" name="email" value="{email}"></span></li>')
+			'<li class="suggested list-group-item"><span class="firstname">{firstname}</span> <span class="lastname">{lastname}</span>' + 
+			'<input class="dorm" type="hidden" name="dorm" value="{dorm}"><span class="pull-right year">{year}' + 
+			'</span><input type="hidden" name="email" value="{email}"></li>')
 			.updateList('listener', autoSuggestClickListener);
 
 	updateSuggestionsListener();
@@ -73,8 +73,9 @@ function updateSuggestions(data){
 	for(var i=0; i<data.results.length; i++){
 		data.results[i] = JSON.parse(data.results[i]);
 	}
-
 	$(".list-group").updateList('update', data.results);
+	(data.results.length > 0) ? $("#help").slideDown('slow') : $("#help").slideUp('slow');
+	
 }
 
 // listens to any input fields changing
@@ -90,6 +91,10 @@ function updateSuggestionsListener(){
 // listens to a user clicking on a suggested user
 function autoSuggestClickListener(object){
 	$(object).on('click', function(){
-		console.log($(this).children());
+		$("#dorm").val($(this).children('input[name="dorm"]').val());
+		$("#email").val($(this).children('input[name="email"]').val());
+		$("#firstName").val(firstName = $(this).children('.firstname').html());
+		$("#lastName").val($(this).children('.lastname').html());
+		$("select").val($(this).children('.year').html());
 	});
 }

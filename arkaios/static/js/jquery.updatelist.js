@@ -18,7 +18,6 @@
             },
             listener: function(newListener) {
                 this.elementListener = newListener[0];
-                console.log(newListener[0]);
             },
             update: function(newArray) {
                 idList = [];

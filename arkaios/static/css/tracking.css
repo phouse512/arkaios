@@ -29,3 +29,23 @@ h1 {
 	margin-left: 75px;
 	margin-top: 100px;
 }
+
+.suggested {
+	cursor: pointer;
+}
+
+.up-arrow { 
+	width: 0;
+	height: 0;
+	position: absolute;
+	top: 11px;
+	left: 40px;
+	border-style: solid;
+	border-width: 0 15px 10px 15px;
+	border-color: transparent transparent #d1e8f6 transparent;
+}
+
+#help {
+	display: none;
+}
+
