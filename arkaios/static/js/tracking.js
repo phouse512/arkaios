@@ -3,7 +3,7 @@ function loadPage(){
 		submitClick();
 	});
 
-	$(".list-group").updateList({}).updateList('template', 
+	$(".list-group").updateList({onFinish: displayHelpText}).updateList('template', 
 			'<li class="suggested list-group-item"><span class="firstname">{firstname}</span> <span class="lastname">{lastname}</span>' + 
 			'<input class="dorm" type="hidden" name="dorm" value="{dorm}"><span class="pull-right year">{year}' + 
 			'</span><input type="hidden" name="email" value="{email}"></li>')
@@ -74,8 +74,6 @@ function updateSuggestions(data){
 		data.results[i] = JSON.parse(data.results[i]);
 	}
 	$(".list-group").updateList('update', data.results);
-	(data.results.length > 0) ? $("#help").slideDown('slow') : $("#help").slideUp('slow');
-	
 }
 
 // listens to any input fields changing
@@ -97,4 +95,17 @@ function autoSuggestClickListener(object){
 		$("#lastName").val($(this).children('.lastname').html());
 		$("select").val($(this).children('.year').html());
 	});
+}
+
+function displayHelpText(){
+	if($("li").length > 0 && $('#help').length == 0){
+		help = $.parseHTML(helpText);
+		$(help).css('display', 'none');
+		$("#helpContainer").html($(help));
+		$(help).slideDown('slow');
+	} else if($("li").length < 1) {
+		console.log('erd');
+		$("#help").slideUp('slow', function() { $("#help").remove(); });
+	}
+
 }

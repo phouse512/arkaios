@@ -30,3 +30,7 @@ var pieChartData = [
         label: "Others"
     }
 ]
+
+var helpText = '<div id="help" class="alert alert-info"><div class="up-arrow">' + 
+                        '</div>If you see your name suggested above, click on it to ' + 
+                        'automatically fill in the form!</div>';
