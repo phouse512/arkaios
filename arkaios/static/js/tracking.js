@@ -97,15 +97,16 @@ function autoSuggestClickListener(object){
 	});
 }
 
+// called when the updateList plugin finishes running!
 function displayHelpText(){
-	if($("li").length > 0 && $('#help').length == 0){
-		help = $.parseHTML(helpText);
-		$(help).css('display', 'none');
-		$("#helpContainer").html($(help));
-		$(help).slideDown('slow');
-	} else if($("li").length < 1) {
-		console.log('erd');
-		$("#help").slideUp('slow', function() { $("#help").remove(); });
-	}
-
+	setTimeout(function() {
+		if($("li").length > 0 && $('#help').length == 0){
+			help = $.parseHTML(helpText);
+			$(help).css('display', 'none');
+			$("#helpContainer").html($(help));
+			$(help).fadeIn('slow');
+		} else if($("li").length < 1) {
+			$("#help").fadeOut('slow', function() { $("#help").remove(); });
+		}
+	}, 1000);
 }

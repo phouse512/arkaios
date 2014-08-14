@@ -43,12 +43,7 @@
                     (this.elementListener) ? this.elementListener(newObject) : console.log('no event listener set');
                 }
 
-                if(this.options.onFinish){
-                    temp = this.options.onFinish;
-                    $(this.options.listSelector).promise().done(function() {
-                        temp();
-                    });
-                }
+                (this.options.onFinish) ? this.options.onFinish() : console.log('no onFinish callback');
             }
         }
 

@@ -273,7 +273,7 @@ def large_group_attendance_search():
 
 	sql = helpers.searchConstruction({'first_name': inputFirstName, 'last_name': inputLastName, 
 			'email': inputEmail, 'dorm': inputDorm, 'year': inputYear})
-	query = db.session.query(Attendee).filter(eval(sql))
+	query = db.session.query(Attendee).filter(eval(sql)).limit(8);
 	
 	output = []
 	for record in query:
