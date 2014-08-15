@@ -203,7 +203,7 @@ function displayAttendanceGraphs(quarter, pieChart){
 	$.get($SCRIPT_ROOT + '/admin/large-group/_get_overview_graphs/' + quarter, function(data){
 		graphData.datasets[0].data = data.week;
 		var ctx = document.getElementById("weekly-attendance-graph").getContext("2d");
-		var attendanceBarChart = new Chart(ctx).Bar(graphData);
+		var attendanceBarChart = new Chart(ctx).Line(graphData);
 
 		for(var i=0; i < pieChart.length; i++){
 			pieChart[i].value = data.year[i];
