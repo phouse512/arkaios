@@ -210,7 +210,10 @@ function displayAttendanceGraphs(quarter, pieChart){
 		}
 
 		var ctx2 = document.getElementById("class-attendance-graph").getContext("2d");
-		var attendancePieChart = new Chart(ctx2).Doughnut(pieChart);
+		var attendancePieChart = new Chart(ctx2).Doughnut(pieChart, { legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"});
+		var legend = attendancePieChart.generateLegend();
+		$("#doughnut-legend").html(legend);
+		console.log(legend);
 	});
 }
 
