@@ -213,7 +213,6 @@ function displayAttendanceGraphs(quarter, pieChart){
 		var attendancePieChart = new Chart(ctx2).Doughnut(pieChart, { legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"});
 		var legend = attendancePieChart.generateLegend();
 		$("#doughnut-legend").html(legend);
-		console.log(legend);
 	});
 }
 

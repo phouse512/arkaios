@@ -28,9 +28,9 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Large Group</a></li>
-                        <li><a href="#">Small Group</a></li>
-                        <li><a href="#">Analytics</a></li>
+                        <li class="{% block active-nav-largegroup %}{% endblock %}"><a href="#">Large Group</a></li>
+                        <li class="{% block active-nav-smallgroup %}{% endblock %}"><a href="#">Small Group</a></li>
+                        <li class="{% block active-nav-analytics %}{% endblock %}"><a href="#">Analytics</a></li>
                     </ul>
                     <button type="button" class="btn btn-default navbar-btn pull-right">Sign In</button>
                 </div>
