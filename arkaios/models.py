@@ -40,21 +40,8 @@ class SmallGroup(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String(200))
 
-	neighborhood_id = Column(Integer, ForeignKey('neighborhood.id'))
-	neighborhood = relationship("Neighborhood", backref=backref('small_groups', order_by=id))
-
 	leader_id = Column(Integer, ForeignKey('user.id'))
 	leader = relationship("User", backref=backref('small_groups', order_by=id))
-
-""" Neighborhood """
-class Neighborhood(Base):
-	__tablename__ = 'neighborhood'
-
-	id = Column(Integer, primary_key=True)
-	name = Column(String(200))
-
-	coordinator_id = Column(Integer, ForeignKey('user.id'))
-	coordinator = relationship("User", backref=backref('neighborhoods', order_by=id))
 
 
 """ Small Group Event Class """
@@ -69,7 +56,6 @@ class SmallGroupEvent(Base):
 
 	small_group_id = Column(Integer, ForeignKey('small_group.id'))
 	small_group = relationship("SmallGroup", backref=backref('small_group_events', order_by=id))
-
 
 
 """ Attendeee Class """

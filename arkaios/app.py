@@ -283,6 +283,51 @@ def large_group_attendance_search():
 
 	return jsonify(results=output)
 
+
+##################################
+#								 #
+#  Family group leaders portion  #
+#								 #
+##################################
+
+@app.route('/family-group/<fg_id>/overview')
+def family_group_leader_overview(fg_id):
+
+	return fg_id
+
+# high level view of quarters/weeks before allowing for attendance modification
+@app.route('/family-group/<fg_id>/manage')
+def family_group_leader_manage(fg_id):
+	fall2014 = [0]*10
+	winter2015 = [0]*10
+	spring2015 = [0]*10
+
+	for i in range(10):
+		fall2014[i] = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(weekNumber=i+1).filter_by(quarter='f14').join(SmallGroupEvent.small_group_event_attendance).count()
+		winter2015[i] = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(weekNumber=i+1).filter_by(quarter='w15').join(SmallGroupEvent.small_group_event_attendance).count()
+		spring2015[i] = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(weekNumber=i+1).filter_by(quarter='s15').join(SmallGroupEvent.small_group_event_attendance).count()
+
+	return render_template('smallgroup/manage.html', f14=fall2014, w15=winter2015, s15=spring2015)
+
+@app.route('/family-group/<fg_id>/attendance/<event_id>')
+def family_group_event_attendance(fg_id, event_id):
+	attendance = db.session.query(SmallGroupEventAttendance).join(SmallGroupEventAttendance.small_group_event).join(SmallGroupEvent.small_group).filter_by(id=fg_id)
+
+	for i in attendance:
+		try:
+			exists = db.session.query(SmallGroupEventAttendance).filter_by(attendee_id=i.attendee.id).join(SmallGroupEventAttendance.small_group_event).filter_by(id=event_id)
+			setattr(i.attendee, 'attend', 1)
+		except AttributeError:
+			print "none"
+			setattr(i.attendee, 'attend', 0)
+
+	for i in attendance:
+		print i.attendee.attend
+
+
+	return render_template('smallgroup/edit.html')
+
+
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')
 def add_numbers():
