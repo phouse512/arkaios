@@ -1,13 +1,67 @@
-		{% extends 'fgleaderbase.html' %}
-		
-		{% block title %}
-		Add Family Group Attendance
-		{% endblock title %}
+{% extends 'fgleaderbase.html' %}
 
-		{% block active_nav_fgmanage %}
-		active
-		{% endblock active_nav_fgmanage %}
+{% block title %}
+Add Family Group Attendance
+{% endblock title %}
 
-		{% block content %}
-		<div>Hi</div>
- 	{% endblock content %}
+{% block resources %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+{% endblock resources %}
+
+{% block active_nav_fgmanage %}
+active
+{% endblock active_nav_fgmanage %}
+
+{% block content %}
+
+<div class="row">
+	<div id="fgListMembers" class="fgPanel col-lg-4 col-md-4 col-lg-offset-2 col-md-offset-2">
+		<h4>Select attendees at this week's large group!</h4>
+		<ul class="list-group">
+			{% for user in records %}
+				<a class="list-group-item {% if existing[loop.index0] == 1 %}active{% endif %}" href="#">
+					<h4 class="list-group-item-heading">{{ user.attendee.first_name ~ " " ~ user.attendee.last_name }}</h4>
+				</a>
+			{% endfor %}
+			<div id="submitOptions" class="row">
+				<div class="col-lg-4 col-md-4">
+					<button id="add" class="btn btn-block btn-primary"><h4><i id="addIcon" class="fa fa-plus"></i></h4></button>
+				</div>
+				<div class="col-lg-8 col-md-8">
+					<button id="submitFG" class="btn btn-block btn-primary"><h4>Submit</h4></button>
+				</div>
+			</div>
+		</ul>
+	</div>
+	<div id="suggestFGMembers" class="fgPanel hidden col-lg-4 col-md-4">
+		<input type="text" placeholder="type here" />
+		<div id="suggestionsFGList">
+
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#add").on('click', function() {
+			console.log('on click');
+			suggestBox = $("#suggestFGMembers");
+			if($(suggestBox).hasClass('hidden') && $(suggestBox).hasClass('animated fadeOutLeft')){
+				$(suggestBox).removeClass('hidden animated fadeOutLeft').addClass('animated fadeInLeft');
+				$("#addIcon").removeClass('fa-plus').addClass('fa-minus');
+			} else if($(suggestBox).hasClass('hidden')) {
+				$(suggestBox).removeClass('hidden').addClass('animated fadeInLeft');
+				$("#addIcon").removeClass('fa-plus').addClass('fa-minus');
+			}
+			else {
+				$(suggestBox).removeClass('animated fadeInLeft');
+				$(suggestBox).addClass('animated fadeOutLeft')
+				$(suggestBox).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+						$(suggestBox).addClass('hidden');
+						$("#addIcon").removeClass('fa-minus').addClass('fa-plus');
+				});
+
+			}
+		});
+	});
+</script>
+{% endblock content %}

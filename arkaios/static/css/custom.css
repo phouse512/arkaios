@@ -1,3 +1,7 @@
+#content {
+  margin-top: 50px;
+}
+
 #sidebar.affix {
 	float: none;
 	position: fixed;
@@ -111,5 +115,42 @@
   width: 20px;
   height: 90%;
   border-radius: 5px;
+}
+
+/*  Family Group Leader Design */
+.fgPanel {
+  margin-top: 25px;
+  padding: 25px;
+  background-color: #E6E6E6;
+  border: 1px solid #B2B2B2;
+  border-radius: 5px;
+}
+
+.fgPanel a {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#submitOptions {
+  padding-top: 10px;
+}
+
+#suggestFGMembers {
+  margin-left: 25px;
+}
+
+#suggestFGMembers input[type="text"] {
+  padding: 10px;
+  border: solid 5px #c9c9c9;
+  transition: border 0.3s;
+  width: 100%;
+}
+#suggestFGMembers input[type="text"]:focus,
+#suggestFGMembers input[type="text"].focus {
+  border: solid 5px #969696;
+}
+
+.hidden {
+  display: none;
 }
 

@@ -68,6 +68,7 @@ class Attendee(Base):
 	year = Column(String(200))
 	email = Column(String(100), unique=True)
 	dorm = Column(String(100))
+	temp = "test"
 
 	def __init__(self, first_name, last_name, year, email, dorm):
 		self.first_name = first_name

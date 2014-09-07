@@ -313,19 +313,18 @@ def family_group_leader_manage(fg_id):
 def family_group_event_attendance(fg_id, event_id):
 	attendance = db.session.query(SmallGroupEventAttendance).join(SmallGroupEventAttendance.small_group_event).join(SmallGroupEvent.small_group).filter_by(id=fg_id)
 
-	for i in attendance:
-		try:
-			exists = db.session.query(SmallGroupEventAttendance).filter_by(attendee_id=i.attendee.id).join(SmallGroupEventAttendance.small_group_event).filter_by(id=event_id)
-			setattr(i.attendee, 'attend', 1)
-		except AttributeError:
+	existing = []
+	for val in attendance:	
+		print val.attendee.id
+		exists = db.session.query(SmallGroupEventAttendance).filter_by(attendee_id=val.attendee.id).join(SmallGroupEventAttendance.small_group_event).filter_by(id=event_id).count()
+		if(exists > 0):	
+			existing.append(1)
+		else:
 			print "none"
-			setattr(i.attendee, 'attend', 0)
-
-	for i in attendance:
-		print i.attendee.attend
-
-
-	return render_template('smallgroup/edit.html')
+			existing.append(0)
+		
+	print existing	
+	return render_template('smallgroup/edit.html', records=attendance, existing=existing)
 
 
 # Example of ajax route that returns JSON
