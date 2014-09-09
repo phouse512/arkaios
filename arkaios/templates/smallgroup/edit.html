@@ -20,7 +20,7 @@ active
 		<h4>Select attendees at this week's large group!</h4>
 		<ul class="list-group">
 			{% for user in records %}
-				<a class="list-group-item {% if existing[loop.index0] == 1 %}active{% endif %}" href="#">
+				<a id="inFG_{{ user.attendee.id }}" class="list-group-item {% if existing[loop.index0] == 1 %}active{% endif %}" href="#">
 					<h4 class="list-group-item-heading">{{ user.attendee.first_name ~ " " ~ user.attendee.last_name }}</h4>
 				</a>
 			{% endfor %}
@@ -37,8 +37,7 @@ active
 	<div id="suggestFGMembers" class="fgPanel hidden col-lg-4 col-md-4">
 		<input class="search" type="text" placeholder="type here" />
 		<div id="suggestionsFGList">
-			<ul class="list list-group">
-			</ul>
+			<ul class="list list-group"></ul>
 		</div>
 	</div>
 </div>
@@ -46,16 +45,32 @@ active
 	$(document).ready(function() {
 		fgLeaderShowSidebarListener();
 
-		var options = {
-			item: '<li class="list-group-item"><h4 class="list-group-item-heading name"></h4><input type="hidden" class="id" /></li>'
-		};
+		$.getJSON($SCRIPT_ROOT + "/family-group/_get_users", function(data){
+			var values = [];
+			for(var i=0; i < data.attendees.length; i++) {
+				values.push(data.attendees[i]);
+			}
 
-		var values = [
-    			{ name: 'Jonny Joe', id:'2' },
-				{ name: 'Jonas John', id:'3' }
-		];
+			var hackerList = new List('suggestFGMembers', optionsListJs, values);
 
-		var hackerList = new List('suggestFGMembers', options, values);
+			$("#suggestionsFGList li").on('click', function(){
+				var test = "inFG_" + $(this).children("input").text();
+				if($("#" + test).length == 0) {
+					var htmlToInsert = 	"<a id='" + test + "' class='list-group-item' href='#'><h4 class='list-group-item-heading'>" + $(this).children("h4").text() + "</h4></a>";
+					$("#fgListMembers ul").append(htmlToInsert);
+					$("#fgListMembers a").off('click').on('click', function(){
+						classToggle(this, 'active');
+					});
+
+				}
+			});
+		});
+
+		$("#fgListMembers a").on('click', function(){
+			classToggle(this, 'active');
+		});
+
+
 	});
 </script>
 {% endblock content %}

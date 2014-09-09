@@ -238,3 +238,12 @@ function fgLeaderShowSidebarListener() {
 	});
 }
 
+// takes input of object and toggles class
+function classToggle(object, detectClass) {
+	if($(object).hasClass(detectClass)) {
+		$(object).removeClass(detectClass);
+	} else {
+		$(object).addClass(detectClass);
+	}
+}
+

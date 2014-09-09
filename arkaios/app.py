@@ -329,6 +329,19 @@ def family_group_event_attendance(fg_id, event_id):
 	print existing	
 	return render_template('smallgroup/edit.html', records=attendance, existing=existing)
 
+@app.route('/family-group/_get_users')
+def family_group_all_users():
+	attendees = db.session.query(Attendee).all()
+
+	userList = []
+	for i in attendees:
+		temp = {
+			'name': i.first_name + " " + i.last_name,
+			'id': i.id
+		}
+		userList.append(temp)
+
+	return jsonify(attendees=userList)
 
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')

@@ -160,3 +160,8 @@
   cursor: pointer;
 }
 
+#suggestionsFGList ul {
+  height: 280px;
+  overflow: scroll;
+}
+
