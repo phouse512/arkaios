@@ -89,7 +89,8 @@ function reloadAttendanceTable(type){
         sift: siftToggleNumber,
         returnType: 0
 	}, function(data) {
-		$("#attendance-data div").html(data);
+		console.log(data);
+		$("#attendance-data").html(data);
 	});
 }
 
@@ -213,6 +214,27 @@ function displayAttendanceGraphs(quarter, pieChart){
 		var attendancePieChart = new Chart(ctx2).Doughnut(pieChart, { legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"});
 		var legend = attendancePieChart.generateLegend();
 		$("#doughnut-legend").html(legend);
+	});
+}
+
+function fgLeaderShowSidebarListener() {
+	$("#add").on('click', function() {
+		suggestBox = $("#suggestFGMembers");
+		if($(suggestBox).hasClass('hidden') && $(suggestBox).hasClass('animated fadeOutLeft')){
+			$(suggestBox).removeClass('hidden animated fadeOutLeft').addClass('animated fadeInLeft');
+			$("#addIcon").removeClass('fa-plus').addClass('fa-minus');
+		} else if($(suggestBox).hasClass('hidden')) {
+			$(suggestBox).removeClass('hidden').addClass('animated fadeInLeft');
+			$("#addIcon").removeClass('fa-plus').addClass('fa-minus');
+		}
+		else {
+			$(suggestBox).removeClass('animated fadeInLeft');
+			$(suggestBox).addClass('animated fadeOutLeft')
+			$(suggestBox).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+					$(suggestBox).addClass('hidden');
+					$("#addIcon").removeClass('fa-minus').addClass('fa-plus');
+			});
+		}
 	});
 }
 

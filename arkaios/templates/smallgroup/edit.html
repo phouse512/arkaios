@@ -6,6 +6,7 @@ Add Family Group Attendance
 
 {% block resources %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+<script src="{{ url_for('static', filename='js/list.min.js') }}"></script>
 {% endblock resources %}
 
 {% block active_nav_fgmanage %}
@@ -34,34 +35,27 @@ active
 		</ul>
 	</div>
 	<div id="suggestFGMembers" class="fgPanel hidden col-lg-4 col-md-4">
-		<input type="text" placeholder="type here" />
+		<input class="search" type="text" placeholder="type here" />
 		<div id="suggestionsFGList">
-
+			<ul class="list list-group">
+			</ul>
 		</div>
 	</div>
 </div>
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("#add").on('click', function() {
-			console.log('on click');
-			suggestBox = $("#suggestFGMembers");
-			if($(suggestBox).hasClass('hidden') && $(suggestBox).hasClass('animated fadeOutLeft')){
-				$(suggestBox).removeClass('hidden animated fadeOutLeft').addClass('animated fadeInLeft');
-				$("#addIcon").removeClass('fa-plus').addClass('fa-minus');
-			} else if($(suggestBox).hasClass('hidden')) {
-				$(suggestBox).removeClass('hidden').addClass('animated fadeInLeft');
-				$("#addIcon").removeClass('fa-plus').addClass('fa-minus');
-			}
-			else {
-				$(suggestBox).removeClass('animated fadeInLeft');
-				$(suggestBox).addClass('animated fadeOutLeft')
-				$(suggestBox).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
-						$(suggestBox).addClass('hidden');
-						$("#addIcon").removeClass('fa-minus').addClass('fa-plus');
-				});
+		fgLeaderShowSidebarListener();
 
-			}
-		});
+		var options = {
+			item: '<li class="list-group-item"><h4 class="list-group-item-heading name"></h4><input type="hidden" class="id" /></li>'
+		};
+
+		var values = [
+    			{ name: 'Jonny Joe', id:'2' },
+				{ name: 'Jonas John', id:'3' }
+		];
+
+		var hackerList = new List('suggestFGMembers', options, values);
 	});
 </script>
 {% endblock content %}

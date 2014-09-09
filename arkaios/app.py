@@ -171,6 +171,9 @@ def large_group_attendance_table_admin():
 	elif(sift == 6):
 		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).filter_by(first_time=1).join(LargeGroupAttendance.attendee).order_by(sortingDictionary[sort])
 	
+	for i in attendance_records:
+		print i
+
 	if returnType == 0:
 		return render_template('largegroup/_attendance_table.html', attendance=attendance_records)
 	else:
