@@ -105,6 +105,10 @@ class SmallGroupEventAttendance(Base):
 	attendee_id = Column(Integer, ForeignKey('attendee.id'))
 	attendee = relationship("Attendee", backref=backref('small_group_event_attendance', order_by=id))
 
+	def __init__(self, event_id, attendee_id):
+		self.small_group_event_id = event_id
+		self.attendee_id = attendee_id
+
 if __name__ == '__main__':
 	from datetime import timedelta
 

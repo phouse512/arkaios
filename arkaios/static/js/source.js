@@ -238,6 +238,7 @@ function fgLeaderShowSidebarListener() {
 	});
 }
 
+// used primarily in fg leader page
 // takes input of object and toggles class
 function classToggle(object, detectClass) {
 	if($(object).hasClass(detectClass)) {
@@ -247,3 +248,27 @@ function classToggle(object, detectClass) {
 	}
 }
 
+// populates the user suggestion list and adds listeners to move 
+// users over to the attendance list on click - also refreshes the listeners
+// on the attendance list
+function getSuggestionList() {
+	$.getJSON($SCRIPT_ROOT + "/family-group/_get_users", function(data){
+		var values = [];
+		for(var i=0; i < data.attendees.length; i++) {
+			values.push(data.attendees[i]);
+		}
+
+		var hackerList = new List('suggestFGMembers', optionsListJs, values);
+
+		$("#suggestionsFGList li").on('click', function(){
+			var test = "inFG_" + $(this).children("input").text();
+			if($("#" + test).length == 0) {
+				var htmlToInsert = 	"<a id='" + test + "' class='list-group-item' href='#'><h4 class='list-group-item-heading'>" + $(this).children("h4").text() + "</h4></a>";
+				$("#fgListMembers ul").prepend(htmlToInsert);
+				$("#fgListMembers a").off('click').on('click', function(){
+					classToggle(this, 'active');
+				});
+			}
+		});
+	});
+}

@@ -314,20 +314,22 @@ def family_group_leader_manage(fg_id):
 
 @app.route('/family-group/<fg_id>/attendance/<event_id>')
 def family_group_event_attendance(fg_id, event_id):
-	attendance = db.session.query(SmallGroupEventAttendance).join(SmallGroupEventAttendance.small_group_event).join(SmallGroupEvent.small_group).filter_by(id=fg_id)
+	attendance = db.session.query(SmallGroupEventAttendance).join(SmallGroupEventAttendance.small_group_event).join(SmallGroupEvent.small_group).filter_by(id=fg_id).distinct()
 
+	norepeat = []
 	existing = []
+	finalList = []
 	for val in attendance:	
-		print val.attendee.id
-		exists = db.session.query(SmallGroupEventAttendance).filter_by(attendee_id=val.attendee.id).join(SmallGroupEventAttendance.small_group_event).filter_by(id=event_id).count()
-		if(exists > 0):	
-			existing.append(1)
-		else:
-			print "none"
-			existing.append(0)
-		
-	print existing	
-	return render_template('smallgroup/edit.html', records=attendance, existing=existing)
+		if val.attendee.id not in [x.attendee.id for x in norepeat]:
+			exists = db.session.query(SmallGroupEventAttendance).filter_by(attendee_id=val.attendee.id).join(SmallGroupEventAttendance.small_group_event).filter_by(id=event_id).count()
+			if(exists > 0):	
+				existing.append(1)
+			else:
+				existing.append(0)
+			finalList.append(val)
+		norepeat.append(val)
+	
+	return render_template('smallgroup/edit.html', records=finalList, existing=existing, currentEventId=event_id)
 
 @app.route('/family-group/_get_users')
 def family_group_all_users():
@@ -342,6 +344,32 @@ def family_group_all_users():
 		userList.append(temp)
 
 	return jsonify(attendees=userList)
+
+# save the family gorup event attendance
+@app.route('/family-group/_save_attendance', methods=['POST'])
+def family_group_save_attendance():
+	newAttending = set(json.loads(request.form['userList']))
+	event = request.form['eventId']
+	#get existing
+	existingAttendees = db.session.query(SmallGroupEventAttendance).filter_by(small_group_event_id=event)
+
+	alreadyAttending = set()
+	for attendee in existingAttendees:
+		alreadyAttending.add(attendee.attendee_id)
+
+	toDel = alreadyAttending - newAttending
+	toIns = newAttending - alreadyAttending
+	
+	for value in toDel:
+		delResults = db.session.query(SmallGroupEventAttendance).filter_by(small_group_event_id=event).filter_by(attendee_id=value)
+		for result in delResults:
+			db.session.delete(result)
+	for value in toIns:
+		tempAttendance = SmallGroupEventAttendance(event_id=event, attendee_id=value)
+		db.session.add(tempAttendance)
+
+	db.session.commit()
+	return jsonify(attendees=list(newAttending))
 
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')
