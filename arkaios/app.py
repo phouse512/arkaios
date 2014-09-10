@@ -3,7 +3,7 @@
 
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask import render_template, request, jsonify, make_response, Response
+from flask import render_template, redirect, url_for, request, jsonify, make_response, Response, flash
 from arkaios.models import Base, User, LargeGroup, SmallGroup, SmallGroupEvent, Attendee, LargeGroupAttendance, SmallGroupEventAttendance
 from arkaios import config
 from arkaios import helpers
@@ -329,7 +329,7 @@ def family_group_event_attendance(fg_id, event_id):
 			finalList.append(val)
 		norepeat.append(val)
 	
-	return render_template('smallgroup/edit.html', records=finalList, existing=existing, currentEventId=event_id)
+	return render_template('smallgroup/edit.html', records=finalList, existing=existing, currentEventId=event_id, fgId=fg_id)
 
 @app.route('/family-group/_get_users')
 def family_group_all_users():
@@ -350,6 +350,7 @@ def family_group_all_users():
 def family_group_save_attendance():
 	newAttending = set(json.loads(request.form['userList']))
 	event = request.form['eventId']
+	fg = request.form['fgId']
 	#get existing
 	existingAttendees = db.session.query(SmallGroupEventAttendance).filter_by(small_group_event_id=event)
 
@@ -357,9 +358,11 @@ def family_group_save_attendance():
 	for attendee in existingAttendees:
 		alreadyAttending.add(attendee.attendee_id)
 
+
 	toDel = alreadyAttending - newAttending
 	toIns = newAttending - alreadyAttending
 	
+
 	for value in toDel:
 		delResults = db.session.query(SmallGroupEventAttendance).filter_by(small_group_event_id=event).filter_by(attendee_id=value)
 		for result in delResults:
@@ -369,7 +372,8 @@ def family_group_save_attendance():
 		db.session.add(tempAttendance)
 
 	db.session.commit()
-	return jsonify(attendees=list(newAttending))
+	flash("You successfully saved attendance!")
+	return redirect(url_for('family_group_leader_manage', fg_id=fg))
 
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')
