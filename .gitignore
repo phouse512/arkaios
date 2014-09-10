@@ -3,3 +3,6 @@
 
 #generic
 *.DS_Store
+
+#local env
+.env
