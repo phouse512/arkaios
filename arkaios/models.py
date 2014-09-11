@@ -10,7 +10,7 @@ Base = declarative_base()
 
 """ User """
 class User(Base):
-	__tablename__ = 'user'
+	__tablename__ = 'leader'
 
 	id = Column(Integer, primary_key=True)
 	name = Column(String(200))
@@ -40,7 +40,7 @@ class SmallGroup(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String(200))
 
-	leader_id = Column(Integer, ForeignKey('user.id'))
+	leader_id = Column(Integer, ForeignKey('leader.id'))
 	leader = relationship("User", backref=backref('small_groups', order_by=id))
 
 
@@ -117,7 +117,9 @@ if __name__ == '__main__':
 
 	PWD = os.path.abspath(os.curdir)
 
-	engine = create_engine('sqlite:///arkaios.db', echo=True)
+	location = os.environ['DATABASE_URL']
+
+	engine = create_engine(location, echo=True)
 
 	Base.metadata.create_all(engine)
 	Session = sessionmaker(bind=engine)
