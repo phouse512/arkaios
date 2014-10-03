@@ -17,6 +17,8 @@ from sqlalchemy.orm import load_only
 app = Flask(__name__)
 app.config.from_object(config)
 
+app.debug = True
+
 db = SQLAlchemy(app)
 db.Model = Base
 
@@ -351,8 +353,8 @@ def family_group_save_attendance():
 	print "yo"
 	print request.form['currentEvent']
 
-	return "hi"
-	"""newAttending = set(json.loads(request.form['userList']))
+	
+	newAttending = set(json.loads(request.form['userList']))
 	event = request.form['eventId']
 	fg = request.form['fgId']
 	#get existing
@@ -377,7 +379,7 @@ def family_group_save_attendance():
 
 	db.session.commit()
 	flash("You successfully saved attendance!")
-	return redirect(url_for('family_group_leader_manage', fg_id=fg))"""
+	return redirect(url_for('family_group_leader_manage', fg_id=fg))
 
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')
