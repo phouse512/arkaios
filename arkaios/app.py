@@ -114,16 +114,16 @@ def large_group_overview_table_admin():
 # Large group manage - collect record counts
 @app.route('/admin/large-group/manage')
 def large_group_manage():
-	winter2014 = [0]*10
-	spring2014 = [0]*10
 	fall2014 = [0]*10
+	winter2015 = [0]*10
+	spring2015 = [0]*10
 
 	for i in range(10):
-		winter2014[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='w14').join(LargeGroup.large_group_attendance).count()
-		spring2014[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='s14').join(LargeGroup.large_group_attendance).count()
 		fall2014[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='f14').join(LargeGroup.large_group_attendance).count()
+		winter2015[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='w15').join(LargeGroup.large_group_attendance).count()
+		spring2015[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='s15').join(LargeGroup.large_group_attendance).count()
 
-	return render_template('largegroup/manage.html', w14=winter2014, s14=spring2014, f14=fall2014)
+	return render_template('largegroup/manage.html', f14=fall2014, w15=winter2015, s15=spring2015)
 
 # Large Group Attendance Page
 @app.route('/admin/large-group/<event_data>')
@@ -348,7 +348,11 @@ def family_group_all_users():
 # save the family gorup event attendance
 @app.route('/family-group/_save_attendance', methods=['POST'])
 def family_group_save_attendance():
-	newAttending = set(json.loads(request.form['userList']))
+	print "yo"
+	print request.form['currentEvent']
+
+	return "hi"
+	"""newAttending = set(json.loads(request.form['userList']))
 	event = request.form['eventId']
 	fg = request.form['fgId']
 	#get existing
@@ -373,7 +377,7 @@ def family_group_save_attendance():
 
 	db.session.commit()
 	flash("You successfully saved attendance!")
-	return redirect(url_for('family_group_leader_manage', fg_id=fg))
+	return redirect(url_for('family_group_leader_manage', fg_id=fg))"""
 
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')

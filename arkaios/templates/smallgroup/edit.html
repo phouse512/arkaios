@@ -17,24 +17,27 @@ active
 
 <div class="row">
 	<div id="fgListMembers" class="fgPanel col-lg-4 col-md-4 col-lg-offset-2 col-md-offset-2">
-		<input id="currentEvent" type="hidden" value="{{ currentEventId }}" />
-		<input id="currentFG" type="hidden" value="{{ fgId }}" />
-		<h4>Select attendees at this week's large group!</h4>
-		<ul class="list-group">
-			{% for user in records %}
-				<a id="inFG_{{ user.attendee.id }}" class="list-group-item {% if existing[loop.index0] == 1 %}active{% endif %}" href="#">
-					<h4 class="list-group-item-heading">{{ user.attendee.first_name ~ " " ~ user.attendee.last_name }}</h4>
-				</a>
-			{% endfor %}
-			<div id="submitOptions" class="row">
-				<div class="col-lg-4 col-md-4">
-					<button id="add" class="btn btn-block btn-primary"><h4><i id="addIcon" class="fa fa-plus"></i></h4></button>
+		<form id="form" action="/family-group/_save_attendance" method="post">
+			<input name="currentEvent" id="currentEvent" type="hidden" value="{{ currentEventId }}" />
+			<input name="currentFG" id="currentFG" type="hidden" value="{{ fgId }}" />
+			<input name="selectedPeople" id="selectedPeople" type="hidden" />
+			<h4>Select attendees at this week's large group!</h4>
+			<ul class="list-group">
+				{% for user in records %}
+					<a id="inFG_{{ user.attendee.id }}" class="list-group-item {% if existing[loop.index0] == 1 %}active{% endif %}" href="#">
+						<h4 class="list-group-item-heading">{{ user.attendee.first_name ~ " " ~ user.attendee.last_name }}</h4>
+					</a>
+				{% endfor %}
+				<div id="submitOptions" class="row">
+					<div class="col-lg-4 col-md-4">
+						<button id="add" class="btn btn-block btn-primary"><h4><i id="addIcon" class="fa fa-plus"></i></h4></button>
+					</div>
+					<div class="col-lg-8 col-md-8">
+						<button id="saveFG" class="btn btn-block btn-primary"><h4>Save</h4></button>
+					</div>
 				</div>
-				<div class="col-lg-8 col-md-8">
-					<button id="saveFG" class="btn btn-block btn-primary"><h4>Save</h4></button>
-				</div>
-			</div>
-		</ul>
+			</ul>
+
 	</div>
 	<div id="suggestFGMembers" class="fgPanel hidden col-lg-4 col-md-4">
 		<input class="search" type="text" placeholder="type here" />
@@ -54,14 +57,19 @@ active
 		getSuggestionList();
 
 		//add save button action
-
-		$("#saveFG").on('click', function() {
+		$("#saveFG").on('click', function(e) {
+			e.preventDefault();
 			list = [];
 			$("#fgListMembers .active").each(function(){
 				id = parseInt($(this).attr("id").substring(5));
 				list.push(id);
 			});
+
+			$("#selectedPeople").val(JSON.stringify({ people: list }));
+
+			document.getElementById("form").submit();
 			
+			/*
 			$.ajax({
 				url: $SCRIPT_ROOT + '/family-group/_save_attendance',
 				type: 'POST',
@@ -76,6 +84,7 @@ active
 					
 				}
 			});
+		 */
 		});
 	});
 </script>

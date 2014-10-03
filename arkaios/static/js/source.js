@@ -218,7 +218,8 @@ function displayAttendanceGraphs(quarter, pieChart){
 }
 
 function fgLeaderShowSidebarListener() {
-	$("#add").on('click', function() {
+	$("#add").on('click', function(e) {
+		e.preventDefault();
 		suggestBox = $("#suggestFGMembers");
 		if($(suggestBox).hasClass('hidden') && $(suggestBox).hasClass('animated fadeOutLeft')){
 			$(suggestBox).removeClass('hidden animated fadeOutLeft').addClass('animated fadeInLeft');

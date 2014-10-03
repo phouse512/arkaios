@@ -28,6 +28,8 @@ function resetScreen(){
 	$("input").val("");
 	$("select").val("");
 	// still need to add the clearing of suggestions
+	$("#suggestionsList ul > li").remove();
+	$("#help").fadeOut('slow', function() { $("#help").remove(); });
 }
 
 // Large group tracking - Submit button click

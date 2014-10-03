@@ -117,7 +117,9 @@ if __name__ == '__main__':
 
 	PWD = os.path.abspath(os.curdir)
 
-	location = os.environ['DATABASE_URL']
+	SQLALCHEMY_DATABASE_URI = 'postgres://PhilipHouse:house@localhost/arkaios'
+	#location = os.environ['DATABASE_URL']
+	location = SQLALCHEMY_DATABASE_URI
 
 	engine = create_engine(location, echo=True)
 

@@ -16,7 +16,7 @@
 					<h4>Fall 2014</h4>
 					<ul class="list-group">
 						{% for current in range(10) %}
-							<a href="{{ url_for('large_group', event_data='w14-w' ~ (current+1)) }}"class="list-group-item">
+							<a href="{{ url_for('large_group', event_data='f14-w' ~ (current+1)) }}"class="list-group-item">
 								<span class="badge">{{ f14[current] }} Visitors</span>
 								Week {{ current+1 }}
 							</a>
@@ -27,7 +27,7 @@
 					<h4>Winter 2015</h4>
 					<ul class="list-group">
 						{% for current in range(10) %}
-							<a href="{{ url_for('large_group', event_data='s14-w' ~ (current+1)) }}" class="list-group-item">
+							<a href="{{ url_for('large_group', event_data='w15-w' ~ (current+1)) }}" class="list-group-item">
 								<span class="badge">{{ w15[current] }} Visitors</span>
 								Week {{ current+1 }}
 							</a>
@@ -38,7 +38,7 @@
 					<h4>Spring 2015</h4>
 					<ul class="list-group">
 						{% for current in range(10) %}
-							<a href="{{ url_for('large_group', event_data='f14-w' ~ (current+1)) }}" class="list-group-item">
+							<a href="{{ url_for('large_group', event_data='s15-w' ~ (current+1)) }}" class="list-group-item">
 								<span class="badge">{{ s15[current] }} Visitors</span>
 								Week {{ current+1 }}
 							</a>
