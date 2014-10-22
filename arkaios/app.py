@@ -172,9 +172,6 @@ def large_group_attendance_table_admin():
 		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).join(LargeGroupAttendance.attendee).filter_by(year="other").order_by(sortingDictionary[sort])	
 	elif(sift == 6):
 		attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).filter_by(first_time=1).join(LargeGroupAttendance.attendee).order_by(sortingDictionary[sort])
-	
-	for i in attendance_records:
-		print i
 
 	if returnType == 0:
 		return render_template('largegroup/_attendance_table.html', attendance=attendance_records)
@@ -298,7 +295,63 @@ def large_group_attendance_search():
 @app.route('/family-group/<fg_id>/overview')
 def family_group_leader_overview(fg_id):
 
-	return fg_id
+	return render_template('smallgroup/overview.html',id=fg_id)
+
+@app.route('/family-group/<fg_id>/_overview_table')
+def family_group_leader_overview_table(fg_id):
+
+	# get params
+	quarter = request.args.get('quarter', "f14", type=str)
+	# for now quarter = 'f14'
+
+	weeks = [0 for i in range(10)]
+
+	users = db.session.query(SmallGroupEventAttendance).join(SmallGroupEventAttendance.small_group_event).join(SmallGroupEvent.small_group).filter_by(id=fg_id).distinct()
+
+
+	norepeat = []
+	finalList = []
+	for val in users:	
+		if val.attendee.id not in [x.attendee.id for x in norepeat]:
+			finalList.append(val)
+		norepeat.append(val)
+	
+	for y in finalList:
+		print y
+
+	attendanceArray = [[0 for i in range(10)] for j in range(len(finalList))]
+	weekDB = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(quarter=quarter).options(load_only("id"))
+
+	# set up full quarter week array with db ID's if exists, 0 otherwise
+	for week in weekDB:
+		try:
+			weeks[int(week.weekNumber)-1] = week.id
+		except ValueError,e:
+			print str(e)
+	#print weeks
+	userCount, weekCount = 0, 0
+	# iterate through full overview table
+	for user in finalList:
+		for week in weeks:
+			try:
+				val = db.session.query(SmallGroupEventAttendance).filter_by(small_group_event_id=week).filter_by(attendee_id=user.attendee.id).first()
+
+				if(val is not None):
+					attendanceArray[userCount][weekCount] = 1
+				# no attendance case
+				else:
+					attendanceArray[userCount][weekCount] = 0
+			except AttributeError,e:
+				# if doesn't exist, assume no attendance
+				print str(e)
+				attendanceArray[userCount][weekCount] = 0
+			weekCount += 1
+		userCount += 1
+		weekCount = 0
+	print attendanceArray
+	print finalList
+	return render_template('smallgroup/_overview_table.html', attendance=attendanceArray, userInfo=finalList)
+
 
 # high level view of quarters/weeks before allowing for attendance modification
 @app.route('/family-group/<fg_id>/manage')
@@ -349,14 +402,11 @@ def family_group_all_users():
 
 # save the family gorup event attendance
 @app.route('/family-group/_save_attendance', methods=['POST'])
-def family_group_save_attendance():
-	print "yo"
-	print request.form['currentEvent']
+def family_group_save_attendance():	
+	newAttending = set(json.loads(request.form['selectedPeople']))
+	event = request.form['currentEvent']
+	fg = request.form['currentFG']
 
-	
-	newAttending = set(json.loads(request.form['userList']))
-	event = request.form['eventId']
-	fg = request.form['fgId']
 	#get existing
 	existingAttendees = db.session.query(SmallGroupEventAttendance).filter_by(small_group_event_id=event)
 
@@ -364,10 +414,15 @@ def family_group_save_attendance():
 	for attendee in existingAttendees:
 		alreadyAttending.add(attendee.attendee_id)
 
+	print newAttending
 
-	toDel = alreadyAttending - newAttending
-	toIns = newAttending - alreadyAttending
-	
+	toDel = alreadyAttending.intersection(newAttending)
+	toIns = newAttending.difference(alreadyAttending)
+
+
+	print toDel
+	print "toIns:"
+	print toIns
 
 	for value in toDel:
 		delResults = db.session.query(SmallGroupEventAttendance).filter_by(small_group_event_id=event).filter_by(attendee_id=value)
@@ -387,3 +442,7 @@ def add_numbers():
     a = request.args.get('a', 0, type=int)
     b = request.args.get('b', 0, type=int)
     return jsonify(result=a + b)
+
+@app.route('/fun')
+def fun():
+	return render_template("fun/fun.html")
