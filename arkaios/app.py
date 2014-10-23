@@ -414,9 +414,16 @@ def family_group_save_attendance():
 	for attendee in existingAttendees:
 		alreadyAttending.add(attendee.attendee_id)
 
+	print "alreadyAttending"
+	print alreadyAttending
+
+	print "\nnewAttending"
 	print newAttending
 
-	toDel = alreadyAttending.intersection(newAttending)
+	toDel = alreadyAttending.difference(newAttending)
+	
+
+
 	toIns = newAttending.difference(alreadyAttending)
 
 
