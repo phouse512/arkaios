@@ -311,7 +311,7 @@ def family_group_leader_overview_table(fg_id):
 
 	norepeat = []
 	finalList = []
-	for val in users:	
+	for val in users:
 		if val.attendee.id not in [x.attendee.id for x in norepeat]:
 			finalList.append(val)
 		norepeat.append(val)
