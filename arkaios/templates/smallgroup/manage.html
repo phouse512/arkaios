@@ -1,50 +1,34 @@
-		{% extends 'fgleaderbase.html' %}
-		
-		{% block title %}
-		Manage Family Group Attendance
-		{% endblock title %}
+{% extends 'fgleaderbase.html' %}
 
-		{% block active_nav_fgmanage %}
-		active
-		{% endblock active_nav_fgmanage %}
+{% block title %}
+Manage Family Group Attendance
+{% endblock title %}
 
-		{% block content %}
-		
-		<div  class="col-lg-10 col-lg-offset-2 col-md-9 col-md-offset-3">
-			<div class="row">
-				<div style="margin-top: 25px;" class="col-lg-3 col-md-3">
-					<h4>Fall 2014</h4>
-					<ul class="list-group">
-						{% for current in range(10) %}
-							<a href="{{ url_for('large_group', event_data='f14-w' ~ (current+1)) }}"class="list-group-item">
-								<span class="badge">{{ f14[current] }} Visitors</span>
-								Week {{ current+1 }}
-							</a>
-						{% endfor %}
-					</ul>
-				</div>
-				<div style="margin-top: 25px;" class="col-lg-3 col-md-3">
-					<h4>Winter 2015</h4>
-					<ul class="list-group">
-						{% for current in range(10) %}
-							<a href="{{ url_for('large_group', event_data='w15-w' ~ (current+1)) }}" class="list-group-item">
-								<span class="badge">{{ w15[current] }} Visitors</span>
-								Week {{ current+1 }}
-							</a>
-						{% endfor %}
-					</ul>
-				</div>
-				<div style="margin-top: 25px;" class="col-lg-3 col-md-3">
-					<h4>Spring 2015</h4>
-					<ul class="list-group">
-						{% for current in range(10) %}
-							<a href="{{ url_for('large_group', event_data='s15-w' ~ (current+1)) }}" class="list-group-item">
-								<span class="badge">{{ s15[current] }} Visitors</span>
-								Week {{ current+1 }}
-							</a>
-						{% endfor %}
-					</ul>
-				</div>
-			</div>
-		</div>
- 	{% endblock content %}
+{% block active_nav_fgmanage %}
+active
+{% endblock active_nav_fgmanage %}
+
+{% block content %}
+<div class="row">
+	<div style="margin-top: 50px;" class="col-lg-6 col-lg-offset-3">
+		<h4>Family Group Events</h4>
+		<ul class="list-group">
+			{% for event in events %}
+				<li class="list-group-item">
+					<p>
+						<b>{{ event.name }} -
+						{{ event.description }}</b>
+						<a href="{{ url_for('family_group_event_attendance', fg_id=fg_id, event_id=event.id) }}" class="pull-right">edit attendance</a>
+						<span class="pull-right"> | </span>
+						<a href="#" class="pull-right">edit event info</a>
+					</p>
+					
+				</li>
+			{% endfor %}
+		</ul>
+		<a href="#" class="btn btn-block btn-primary"><i class="fa fa-plus"></i>Add Event</a>		
+
+	</div>
+
+</div>
+{% endblock content %}

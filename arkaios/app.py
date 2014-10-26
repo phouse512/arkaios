@@ -356,16 +356,10 @@ def family_group_leader_overview_table(fg_id):
 # high level view of quarters/weeks before allowing for attendance modification
 @app.route('/family-group/<fg_id>/manage')
 def family_group_leader_manage(fg_id):
-	fall2014 = [0]*10
-	winter2015 = [0]*10
-	spring2015 = [0]*10
+	
+	events = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id)
 
-	for i in range(10):
-		fall2014[i] = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(weekNumber=i+1).filter_by(quarter='f14').join(SmallGroupEvent.small_group_event_attendance).count()
-		winter2015[i] = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(weekNumber=i+1).filter_by(quarter='w15').join(SmallGroupEvent.small_group_event_attendance).count()
-		spring2015[i] = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(weekNumber=i+1).filter_by(quarter='s15').join(SmallGroupEvent.small_group_event_attendance).count()
-
-	return render_template('smallgroup/manage.html', f14=fall2014, w15=winter2015, s15=spring2015)
+	return render_template('smallgroup/manage.html', fg_id=fg_id, events=events)
 
 @app.route('/family-group/<fg_id>/attendance/<event_id>')
 def family_group_event_attendance(fg_id, event_id):
@@ -414,22 +408,8 @@ def family_group_save_attendance():
 	for attendee in existingAttendees:
 		alreadyAttending.add(attendee.attendee_id)
 
-	print "alreadyAttending"
-	print alreadyAttending
-
-	print "\nnewAttending"
-	print newAttending
-
 	toDel = alreadyAttending.difference(newAttending)
-	
-
-
 	toIns = newAttending.difference(alreadyAttending)
-
-
-	print toDel
-	print "toIns:"
-	print toIns
 
 	for value in toDel:
 		delResults = db.session.query(SmallGroupEventAttendance).filter_by(small_group_event_id=event).filter_by(attendee_id=value)
@@ -442,6 +422,10 @@ def family_group_save_attendance():
 	db.session.commit()
 	flash("You successfully saved attendance!")
 	return redirect(url_for('family_group_leader_manage', fg_id=fg))
+
+@app.route('/family-group/add')
+def family_group_add():
+	return render_template("smallgroup/add.html")
 
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')
