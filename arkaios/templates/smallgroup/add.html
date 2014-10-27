@@ -1,0 +1,42 @@
+{% extends 'fgleaderbase.html' %}
+
+{% block title %}
+Manage Family Group Attendance
+{% endblock title %}
+
+{% block active_nav_fgadd %}
+active
+{% endblock active_nav_fgadd %}
+
+{% block content %}
+<div style="margin-top: 60px;" class="row">
+	<div class="col-lg-6 col-lg-offset-1">
+		<form role="form" action="/family-group/{{ fg_id }}/add" method="post" name="family_group_add">
+			{{ form.hidden_tag() }}
+			<div class="form-group">
+				<label for="name">Family Group Event Name (can be something like "Week 1" etc.):</label>
+				{{ form.name(class_="form-control", placeholder="event name..")}}
+			</div>
+			
+			<div class="form-group">
+				<label for="description">Family group description (can be something like "Bible Study of Luke" or "outing"):</label>
+				{{ form.description(class_="form-control", placeholder="description..") }}
+			</div>
+
+			<div class="form-group">
+				<label for="quarter">Quarter:</label>
+				{{ form.quarter(class_="form-control") }}
+			</div>
+
+			<div class="form-group">
+				<label for="week">Which week number?</label>
+				{{ form.week(class_="form-control") }}
+			</div>
+
+			<input type="submit" class="btn btn-default" value="Add" />
+		</form>
+
+	</div>
+</div>
+
+{% endblock content %}

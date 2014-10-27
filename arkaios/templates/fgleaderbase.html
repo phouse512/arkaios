@@ -28,8 +28,8 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="{% block active_nav_fgoverview %}{% endblock %}"><a href="#">View Attendance</a></li>
-                        <li class="{% block active_nav_fgmanage %}{% endblock %}"><a href="#">Add Attendance</a></li>
+                        <li class="{% block active_nav_fgoverview %}{% endblock %}"><a href="{{ url_for('family_group_leader_manage', fg_id=fg_id) }}">Manage</a></li>
+                        <li class="{% block active_nav_fg_add %}{% endblock %}"><a href="{{ url_for('family_group_add', fg_id=fg_id) }}">Add Event</a></li>
                     </ul>
                     <button type="button" class="btn btn-default navbar-btn pull-right">Sign In</button>
                 </div>

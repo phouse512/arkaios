@@ -7,6 +7,7 @@ from flask import render_template, redirect, url_for, request, jsonify, make_res
 from arkaios.models import Base, User, LargeGroup, SmallGroup, SmallGroupEvent, Attendee, LargeGroupAttendance, SmallGroupEventAttendance
 from arkaios import config
 from arkaios import helpers
+from forms import EventForm
 
 import csv
 import json
@@ -295,7 +296,7 @@ def large_group_attendance_search():
 @app.route('/family-group/<fg_id>/overview')
 def family_group_leader_overview(fg_id):
 
-	return render_template('smallgroup/overview.html',id=fg_id)
+	return render_template('smallgroup/overview.html',fg_id=fg_id)
 
 @app.route('/family-group/<fg_id>/_overview_table')
 def family_group_leader_overview_table(fg_id):
@@ -378,7 +379,7 @@ def family_group_event_attendance(fg_id, event_id):
 			finalList.append(val)
 		norepeat.append(val)
 	
-	return render_template('smallgroup/edit.html', records=finalList, existing=existing, currentEventId=event_id, fgId=fg_id)
+	return render_template('smallgroup/edit.html', records=finalList, existing=existing, currentEventId=event_id, fg_id=fg_id)
 
 @app.route('/family-group/_get_users')
 def family_group_all_users():
@@ -421,11 +422,24 @@ def family_group_save_attendance():
 
 	db.session.commit()
 	flash("You successfully saved attendance!")
+	print fg
 	return redirect(url_for('family_group_leader_manage', fg_id=fg))
 
-@app.route('/family-group/add')
-def family_group_add():
-	return render_template("smallgroup/add.html")
+@app.route('/family-group/<fg_id>/add', methods = ['GET', 'POST'])
+def family_group_add(fg_id):
+	if request.method == 'GET':
+		form = EventForm(request.args)
+	else:
+		form = EventForm(coerce=int)
+
+	if form.validate_on_submit():
+		event = SmallGroupEvent(name=form.name.data, description=form.description.data, weekNumber=form.week.data, quarter=form.quarter.data, small_group_id=fg_id)
+		db.session.add(event)
+		db.session.commit()
+		flash(('Event added successfully.'))
+		return redirect(url_for('family_group_leader_manage', fg_id=fg_id))
+
+	return render_template("smallgroup/add.html", form=form, fg_id=fg_id)
 
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')
