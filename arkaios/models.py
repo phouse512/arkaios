@@ -17,9 +17,22 @@ class User(Base):
 	password = Column(String(100))
 	scope = Column(Integer)
 
-	def __init__(self, name, password):
+	def __init__(self, name, password, scope):
 		self.name = name
 		self.password = password
+		self.scope = scope
+
+	def is_authenticated(self):
+		return True
+
+	def is_active(self):
+		return True
+
+	def is_anonymous(self):
+		return False
+
+	def get_id(self):
+		return unicode(self.id)
 
 	def __repr__(self):
 		return '<User %r>' % self.name
@@ -129,7 +142,7 @@ if __name__ == '__main__':
 	session = Session()
 
 	# Add a sample user
-	user = User(name='Philip House', password="test")
+	user = User(name='Philip House', password="test", scope=int(0))
 	largegroup = LargeGroup(name='TestFocus', weekNumber=1, quarter="w14")
 	session.add(largegroup)
 	session.add(user)

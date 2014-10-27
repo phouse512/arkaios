@@ -20,8 +20,19 @@ app.config.from_object(config)
 
 app.debug = True
 
+lm = LoginManager()
+lm.init_app(app)
+
 db = SQLAlchemy(app)
 db.Model = Base
+
+@app.before_request
+def before_request():
+    g.user = current_user
+
+@lm.user_loader
+def load_user(id):
+	return db.session.query(User).get(int(id))
 
 @app.route('/admin/large-group/')
 def large_group_overview():
@@ -440,6 +451,24 @@ def family_group_add(fg_id):
 		return redirect(url_for('family_group_leader_manage', fg_id=fg_id))
 
 	return render_template("smallgroup/add.html", form=form, fg_id=fg_id)
+
+@app.route('family-group/login', methods = ['GET', 'POST'])
+def family_group_login():
+	if g.user is not None and g.user.is_authenticated():
+		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
+
+	form = LoginForm() if request.method == 'POST' else LoginForm(request.args)
+	if form.validate_on_submit():
+
+		user = db.session.query(User).filter_by(username=form.username.data).filter_by(password=form.password.data).first()
+		if user is None:
+			flash('Incorrect login information, please try again, or email philiphouse2015@u.northwestern.edu.')
+			return redirect(url_for('family_group_login'))
+
+		login_user(user)
+		flash(('Logged in successfully.'))
+		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
+	return render_template('login.html', form=form)
 
 # Example of ajax route that returns JSON
 @app.route('/_add_numbers')
