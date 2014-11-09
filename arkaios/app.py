@@ -34,6 +34,7 @@ def before_request():
 def load_user(id):
 	return db.session.query(User).get(int(id))
 
+# add permissions
 @app.route('/admin/large-group/')
 def large_group_overview():
 	userCount = db.session.query(Attendee).count()
