@@ -445,7 +445,7 @@ def family_group_save_attendance():
 	db.session.commit()
 	flash("You successfully saved attendance!")
 	print fg
-	return redirect(url_for('family_group_leader_manage', user=g.user, fg_id=fg))
+	return redirect(url_for('family_group_leader_manage', fg_id=fg))
 
 @app.route('/family-group/<fg_id>/add', methods = ['GET', 'POST'])
 @login_required
