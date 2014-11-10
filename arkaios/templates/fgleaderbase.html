@@ -29,9 +29,13 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li class="{% block active_nav_fgoverview %}{% endblock %}"><a href="{{ url_for('family_group_leader_manage', fg_id=fg_id) }}">Manage</a></li>
-                        <li class="{% block active_nav_fg_add %}{% endblock %}"><a href="{{ url_for('family_group_add', fg_id=fg_id) }}">Add Event</a></li>
+                        <li class="{% block active_nav_fgadd %}{% endblock %}"><a href="{{ url_for('family_group_add', fg_id=fg_id) }}">Add Event</a></li>
                     </ul>
-                    <button type="button" class="btn btn-default navbar-btn pull-right">Sign In</button>
+                   {% if user %}
+                       <a href="/logout" class="btn btn-default navbar-btn pull-right">Logout, {{ user.name }}</a>
+                   {% else %}
+                        <a href="/family-group/login" class="btn btn-default navbar-btn pull-right">Sign In</a>
+                   {% endif %}
                 </div>
             </div>
         </div>

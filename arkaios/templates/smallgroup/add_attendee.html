@@ -1,0 +1,45 @@
+{% extends 'fgleaderbase.html' %}
+
+{% block title %}
+Add Attendee
+{% endblock title %}
+
+
+{% block content %}
+<div style="margin-top: 60px;" class="row">
+	<div class="col-lg-6 col-lg-offset-1">
+		<h4>Add a new attendee!</h4>
+		<form role="form" action="/add/attendee" method="post" name="family_group_add">
+			{{ form.hidden_tag() }}
+			<div class="form-group">
+				<label for="name">First Name:</label>
+				{{ form.first_name(class_="form-control", placeholder="first name..")}}
+			</div>
+			
+			<div class="form-group">
+				<label for="description">Last Name:</label>
+				{{ form.last_name(class_="form-control", placeholder="last name..") }}
+			</div>
+
+			<div class="form-group">
+				<label for="quarter">Year:</label>
+				{{ form.year(class_="form-control") }}
+			</div>
+
+			<div class="form-group">
+				<label for="week">Email:</label>
+				{{ form.email(class_="form-control") }}
+			</div>
+
+			<div class="form-group">
+				<label for="week">Dorm:</label>
+				{{ form.dorm(class_="form-control") }}
+			</div>
+
+			<input type="submit" class="btn btn-default" value="Add" />
+		</form>
+
+	</div>
+</div>
+
+{% endblock content %}

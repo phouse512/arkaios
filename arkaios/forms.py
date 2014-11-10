@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, SelectField
+from wtforms import TextField, SelectField, PasswordField
 from wtforms.validators import Required
 
 class EventForm(Form):
@@ -11,3 +11,11 @@ class EventForm(Form):
 class LoginForm(Form):
 	username = TextField('username', validators = [Required()])
 	password = PasswordField('password', validators = [Required()])
+
+class AttendeeForm(Form):
+	first_name = TextField('first name', validators = [Required()])
+	last_name = TextField('last name', validators = [Required()])
+	year = SelectField('year', choices = [('freshman', 'Freshman'), ('sophomore', 'Sophomore'), ('junior', 'Junior'), ('senior', 'Senior')], validators = [Required()])
+	email = TextField('email', validators = [Required()])
+	dorm = TextField('dorm')
+	

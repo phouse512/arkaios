@@ -3,11 +3,13 @@
 
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask import render_template, redirect, url_for, request, jsonify, make_response, Response, flash
+from flask.ext.login import LoginManager
+from flask.ext.login import login_required, login_user, current_user, logout_user
+from flask import render_template, redirect, url_for, request, jsonify, make_response, Response, flash, g
 from arkaios.models import Base, User, LargeGroup, SmallGroup, SmallGroupEvent, Attendee, LargeGroupAttendance, SmallGroupEventAttendance
 from arkaios import config
 from arkaios import helpers
-from forms import EventForm
+from forms import EventForm, LoginForm, AttendeeForm
 
 import csv
 import json
@@ -305,6 +307,10 @@ def large_group_attendance_search():
 #								 #
 ##################################
 
+@app.route('/family-group/')
+def family_group_welcome():
+	return render_template('smallgroup/welcome.html', user=g.user)
+
 @app.route('/family-group/<fg_id>/overview')
 def family_group_leader_overview(fg_id):
 
@@ -368,13 +374,15 @@ def family_group_leader_overview_table(fg_id):
 
 # high level view of quarters/weeks before allowing for attendance modification
 @app.route('/family-group/<fg_id>/manage')
+@login_required
 def family_group_leader_manage(fg_id):
 	
 	events = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id)
 
-	return render_template('smallgroup/manage.html', fg_id=fg_id, events=events)
+	return render_template('smallgroup/manage.html', user=g.user, fg_id=fg_id, events=events)
 
 @app.route('/family-group/<fg_id>/attendance/<event_id>')
+@login_required
 def family_group_event_attendance(fg_id, event_id):
 	attendance = db.session.query(SmallGroupEventAttendance).join(SmallGroupEventAttendance.small_group_event).join(SmallGroupEvent.small_group).filter_by(id=fg_id).distinct()
 
@@ -391,9 +399,10 @@ def family_group_event_attendance(fg_id, event_id):
 			finalList.append(val)
 		norepeat.append(val)
 	
-	return render_template('smallgroup/edit.html', records=finalList, existing=existing, currentEventId=event_id, fg_id=fg_id)
+	return render_template('smallgroup/edit.html', user=g.user, records=finalList, existing=existing, currentEventId=event_id, fg_id=fg_id)
 
 @app.route('/family-group/_get_users')
+@login_required
 def family_group_all_users():
 	attendees = db.session.query(Attendee).all()
 
@@ -409,6 +418,7 @@ def family_group_all_users():
 
 # save the family gorup event attendance
 @app.route('/family-group/_save_attendance', methods=['POST'])
+@login_required
 def family_group_save_attendance():	
 	newAttending = set(json.loads(request.form['selectedPeople']))
 	event = request.form['currentEvent']
@@ -435,9 +445,10 @@ def family_group_save_attendance():
 	db.session.commit()
 	flash("You successfully saved attendance!")
 	print fg
-	return redirect(url_for('family_group_leader_manage', fg_id=fg))
+	return redirect(url_for('family_group_leader_manage', user=g.user, fg_id=fg))
 
 @app.route('/family-group/<fg_id>/add', methods = ['GET', 'POST'])
+@login_required
 def family_group_add(fg_id):
 	if request.method == 'GET':
 		form = EventForm(request.args)
@@ -451,9 +462,9 @@ def family_group_add(fg_id):
 		flash(('Event added successfully.'))
 		return redirect(url_for('family_group_leader_manage', fg_id=fg_id))
 
-	return render_template("smallgroup/add.html", form=form, fg_id=fg_id)
+	return render_template("smallgroup/add.html", user=g.user, form=form, fg_id=fg_id)
 
-@app.route('family-group/login', methods = ['GET', 'POST'])
+@app.route('/family-group/login', methods = ['GET', 'POST'])
 def family_group_login():
 	if g.user is not None and g.user.is_authenticated():
 		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
@@ -461,7 +472,7 @@ def family_group_login():
 	form = LoginForm() if request.method == 'POST' else LoginForm(request.args)
 	if form.validate_on_submit():
 
-		user = db.session.query(User).filter_by(username=form.username.data).filter_by(password=form.password.data).first()
+		user = db.session.query(User).filter_by(name=form.username.data).filter_by(password=form.password.data).first()
 		if user is None:
 			flash('Incorrect login information, please try again, or email philiphouse2015@u.northwestern.edu.')
 			return redirect(url_for('family_group_login'))
@@ -469,14 +480,24 @@ def family_group_login():
 		login_user(user)
 		flash(('Logged in successfully.'))
 		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
-	return render_template('login.html', form=form)
+	return render_template('smallgroup/login.html', form=form)
 
-# Example of ajax route that returns JSON
-@app.route('/_add_numbers')
-def add_numbers():
-    a = request.args.get('a', 0, type=int)
-    b = request.args.get('b', 0, type=int)
-    return jsonify(result=a + b)
+@app.route('/add/attendee', methods = ['GET', 'POST'])
+@login_required
+def add_user():
+	form = AttendeeForm() if request.method == 'POST' else AttendeeForm(request.args)
+	if form.validate_on_submit():
+		new_attendee = Attendee(form.first_name.data, form.last_name.data, form.year.data, form.email.data, form.dorm.data)
+		db.session.add(new_attendee)
+		db.session.commit()
+		flash(('Attendee add successfully! They can now begin "attending" events :)'))
+		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
+	return render_template('smallgroup/add_attendee.html', form=form, user=g.user)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('welcome'))
 
 @app.route('/fun')
 def fun():
