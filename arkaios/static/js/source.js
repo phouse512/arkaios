@@ -273,3 +273,22 @@ function getSuggestionList() {
 		});
 	});
 }
+
+// get the overview table for FG attendance!!
+function loadFGOverviewTable(){
+	$("#loading-image").show();
+	fg = $("#family-group-id").val();
+
+	url = $SCRIPT_ROOT + '/family-group/' + fg + '/_overview_table';
+
+	$.ajax({
+  		url: url,
+  		data: { quarter: 'w15' },
+  		success: function(data){
+  			$("#fg-overview-data").html(data);
+  		},
+  		complete: function(){
+  			$("#loading-image").hide();
+  		}
+	});
+}
