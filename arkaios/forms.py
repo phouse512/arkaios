@@ -18,4 +18,11 @@ class AttendeeForm(Form):
 	year = SelectField('year', choices = [('freshman', 'Freshman'), ('sophomore', 'Sophomore'), ('junior', 'Junior'), ('senior', 'Senior')], validators = [Required()])
 	email = TextField('email', validators = [Required()])
 	dorm = TextField('dorm')
-	
+
+class ChangePasswordForm(Form):
+	current_password = PasswordField('current_password', validators = [Required()])
+	new_password = PasswordField('new_password', validators = [Required()])
+	pw_confirm = PasswordField('pw_confirm', validators = [
+		Required(),
+		EqualTo('new_password', message="Password fields must match.")
+	])

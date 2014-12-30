@@ -499,6 +499,14 @@ def logout():
     logout_user()
     return redirect(url_for('welcome'))
 
+@app.route('/user/changepassword', methods = ['GET', 'POST'])
+@login_required
+def change_password():
+	form = ChangePasswordForm() if request.method == 'POST' else ChangePasswordForm(request.args)
+	if form.validate_on_submit():
+		
+
+
 @app.route('/fun')
 def fun():
 	return render_template("fun/fun.html")
