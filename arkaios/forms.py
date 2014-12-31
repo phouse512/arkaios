@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
 from wtforms import TextField, SelectField, PasswordField
-from wtforms.validators import Required
+from wtforms.validators import Required, EqualTo
 
 class EventForm(Form):
 	name = TextField('name', validators = [Required()])

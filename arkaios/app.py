@@ -9,7 +9,7 @@ from flask import render_template, redirect, url_for, request, jsonify, make_res
 from arkaios.models import Base, User, LargeGroup, SmallGroup, SmallGroupEvent, Attendee, LargeGroupAttendance, SmallGroupEventAttendance
 from arkaios import config
 from arkaios import helpers
-from forms import EventForm, LoginForm, AttendeeForm
+from forms import EventForm, LoginForm, AttendeeForm, ChangePasswordForm
 
 import csv
 import json
@@ -497,14 +497,23 @@ def add_user():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('welcome'))
+    return redirect(url_for('family_group_welcome'))
 
 @app.route('/user/changepassword', methods = ['GET', 'POST'])
 @login_required
 def change_password():
 	form = ChangePasswordForm() if request.method == 'POST' else ChangePasswordForm(request.args)
 	if form.validate_on_submit():
-		
+		user = db.session.query(User).filter_by(name=g.user.username).filter_by(password=form.current_password.data).first()
+		if user is None:
+			flash('Incorrect login information, please try again, or email philiphouse2015 at u.northwestern.edu.')
+			return redirect(url_for('family_group_login'))
+
+		user.password = form.new_password.data
+		db.session.commit()
+		flash(('Password changed succesfully!!.'))
+		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
+	return render_template('smallgroup/login.html', form=form)
 
 
 @app.route('/fun')
