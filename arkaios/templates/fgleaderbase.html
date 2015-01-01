@@ -33,6 +33,7 @@
                     </ul>
                    {% if user %}
                        <a href="/logout" class="btn btn-default navbar-btn pull-right">Logout, {{ user.name }}</a>
+                       <a href="/user/changepassword" style="margin-right: 10px;" class="btn btn-default navbar-btn pull-right">Change Password</a>
                    {% else %}
                         <a href="/family-group/login" class="btn btn-default navbar-btn pull-right">Sign In</a>
                    {% endif %}

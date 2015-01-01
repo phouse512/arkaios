@@ -309,7 +309,9 @@ def large_group_attendance_search():
 
 @app.route('/family-group/')
 def family_group_welcome():
-	return render_template('smallgroup/welcome.html', user=g.user)
+	if g.user is not None and g.user.is_authenticated():
+		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
+	return render_template('smallgroup/welcome.html')
 
 @app.route('/family-group/<fg_id>/overview')
 def family_group_leader_overview(fg_id):
@@ -376,10 +378,10 @@ def family_group_leader_overview_table(fg_id):
 @app.route('/family-group/<fg_id>/manage')
 @login_required
 def family_group_leader_manage(fg_id):
-	
+	family_group = db.session.query(SmallGroup).filter_by(id=fg_id).first()
 	events = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(quarter='w15')
 
-	return render_template('smallgroup/manage.html', user=g.user, fg_id=fg_id, events=events)
+	return render_template('smallgroup/manage.html', user=g.user,family_group=family_group, fg_id=fg_id, events=events)
 
 @app.route('/family-group/<fg_id>/attendance/<event_id>')
 @login_required
@@ -504,16 +506,18 @@ def logout():
 def change_password():
 	form = ChangePasswordForm() if request.method == 'POST' else ChangePasswordForm(request.args)
 	if form.validate_on_submit():
-		user = db.session.query(User).filter_by(name=g.user.username).filter_by(password=form.current_password.data).first()
+		user = db.session.query(User).filter_by(name=g.user.name).filter_by(password=form.current_password.data).first()
 		if user is None:
-			flash('Incorrect login information, please try again, or email philiphouse2015 at u.northwestern.edu.')
-			return redirect(url_for('family_group_login'))
+			flash('Incorrect password, please try again, or email philiphouse2015 at u.northwestern.edu.')
+			return render_template('smallgroup/change_password.html', form=form, user=g.user)
 
 		user.password = form.new_password.data
 		db.session.commit()
 		flash(('Password changed succesfully!!.'))
 		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
-	return render_template('smallgroup/login.html', form=form)
+	elif(form.errors):
+		flash((form.errors))
+	return render_template('smallgroup/change_password.html', form=form, user=g.user)
 
 
 @app.route('/fun')
