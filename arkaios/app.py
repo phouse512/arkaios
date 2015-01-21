@@ -449,6 +449,12 @@ def family_group_save_attendance():
 	print fg
 	return redirect(url_for('family_group_leader_manage', fg_id=fg))
 
+@app.route('/admin/family-group')
+@login_required
+def family_group_overview():
+	family_groups = db.session.query(SmallGroup).all()
+	return render_template('smallgroup/admin.html', user=g.user, small_groups=family_groups)
+
 @app.route('/family-group/<fg_id>/add', methods = ['GET', 'POST'])
 @login_required
 def family_group_add(fg_id):
@@ -481,6 +487,8 @@ def family_group_login():
 
 		login_user(user)
 		flash(('Logged in successfully.'))
+		if g.user.scope == 12345:
+			return redirect(url_for('family_group_overview'))
 		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
 	return render_template('smallgroup/login.html', form=form)
 
@@ -514,10 +522,14 @@ def change_password():
 		user.password = form.new_password.data
 		db.session.commit()
 		flash(('Password changed succesfully!!.'))
+		if g.user.scope == 12345:
+			return redirect(url_for('family_group_overview'))
 		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
 	elif(form.errors):
 		flash((form.errors))
 	return render_template('smallgroup/change_password.html', form=form, user=g.user)
+
+
 
 
 @app.route('/fun')

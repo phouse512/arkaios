@@ -1,0 +1,20 @@
+{% extends 'fgleaderbase.html' %}
+
+{% block title %}
+Manage Family Group Attendance
+{% endblock title %}
+
+{% block content %}
+<div style="margin-top: 60px;" class="row">
+	<div class="col-lg-8 col-lg-offset-1">
+		<h3>All Family Groups</h3>
+		<ul class="list-group">
+		{% for smallgroup in small_groups %}
+			<a class="list-group-item" href="{{ url_for('family_group_leader_manage', fg_id=smallgroup.id) }}">
+				{{ smallgroup.name }}
+			</a>
+		{% endfor %}
+		</ul>
+	</div>
+</div>
+{% endblock content %}
