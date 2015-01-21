@@ -11,7 +11,7 @@ Manage Family Group Attendance
 		<ul class="list-group">
 		{% for smallgroup in small_groups %}
 			<a class="list-group-item" href="{{ url_for('family_group_leader_manage', fg_id=smallgroup.id) }}">
-				{{ smallgroup.name }}
+				{{ smallgroup.name }} - {{ smallgroup.leader.name }}
 			</a>
 		{% endfor %}
 		</ul>
