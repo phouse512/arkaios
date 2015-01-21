@@ -310,6 +310,8 @@ def large_group_attendance_search():
 @app.route('/family-group/')
 def family_group_welcome():
 	if g.user is not None and g.user.is_authenticated():
+		if g.user.scope == 12345:
+			return redirect(url_for('family_group_overview'))
 		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
 	return render_template('smallgroup/welcome.html')
 
