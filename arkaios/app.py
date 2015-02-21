@@ -530,10 +530,3 @@ def change_password():
 	elif(form.errors):
 		flash((form.errors))
 	return render_template('smallgroup/change_password.html', form=form, user=g.user)
-
-
-
-
-@app.route('/fun')
-def fun():
-	return render_template("fun/fun.html")
