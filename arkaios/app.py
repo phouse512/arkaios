@@ -229,11 +229,11 @@ def large_group_attendance_tracking():
 	week = request.args.get('week', 1, type=int)
 
 	# gather user input
-	inputFirstName = request.args.get('firstName')
-	inputLastName = request.args.get('lastName')
-	inputEmail = request.args.get('email')
-	inputDorm = request.args.get('dorm')
-	inputYear = request.args.get('year')
+	inputFirstName = request.args.get('firstName').trim().lower()
+	inputLastName = request.args.get('lastName').trim().lower()
+	inputEmail = request.args.get('email').trim().lower()
+	inputDorm = request.args.get('dorm').trim().lower()
+	inputYear = request.args.get('year').trim().lower()
 	errorArray = []
 
 	# error handling
