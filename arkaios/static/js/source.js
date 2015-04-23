@@ -283,7 +283,7 @@ function loadFGOverviewTable(){
 
 	$.ajax({
   		url: url,
-  		data: { quarter: 'w15' },
+  		data: { quarter: 's15' },
   		success: function(data){
   			$("#fg-overview-data").html(data);
   		},
