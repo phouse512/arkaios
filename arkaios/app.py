@@ -324,7 +324,7 @@ def family_group_leader_overview(fg_id):
 def family_group_leader_overview_table(fg_id):
 
 	# get params
-	quarter = request.args.get('quarter', "w15", type=str)
+	quarter = request.args.get('quarter', "s15", type=str)
 	# for now quarter = 'w15'
 
 	weeks = [0 for i in range(10)]
@@ -381,7 +381,7 @@ def family_group_leader_overview_table(fg_id):
 @login_required
 def family_group_leader_manage(fg_id):
 	family_group = db.session.query(SmallGroup).filter_by(id=fg_id).first()
-	events = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(quarter='w15')
+	events = db.session.query(SmallGroupEvent).filter_by(small_group_id=fg_id).filter_by(quarter='s15')
 
 	return render_template('smallgroup/manage.html', user=g.user,family_group=family_group, fg_id=fg_id, events=events)
 
