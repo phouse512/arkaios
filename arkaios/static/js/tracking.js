@@ -35,9 +35,9 @@ function resetScreen(){
 // Large group tracking - Submit button click
 function submitClick(){
 	$.getJSON($SCRIPT_ROOT + '/focus/_track', {
-		firstName: $('#firstName').val(),
-        lastName: $('#lastName').val(),
-        email: $('#email').val(),
+		firstName: $('#firstName').val().toLowerCase(),
+        lastName: $('#lastName').val().toLowerCase(),
+        email: $('#email').val().toLowerCase(),
         dorm: $('#dorm').val(),
         year: $('select').val(),
         quarter: $('#quarter').html(),
@@ -61,10 +61,10 @@ function parseTrackingStatus(data){
 
 function searchUsers(){
 	$.getJSON($SCRIPT_ROOT + '/focus/_search', {
-		firstName: $('#firstName').val(),
-		lastName: $('#lastName').val(),
-		email: $("#email").val(),
-		dorm: $("#dorm").val(),
+		firstName: $.trim($('#firstName').val().toLowerCase()),
+		lastName: $.trim($('#lastName').val().toLowerCase()),
+		email: $.trim($("#email").val().toLowerCase()),
+		dorm: $.trim($("#dorm").val()),
 		year: $('select').val()
 	}, function(data) {
 		updateSuggestions(data);

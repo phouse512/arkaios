@@ -511,6 +511,16 @@ def logout():
     logout_user()
     return redirect(url_for('family_group_welcome'))
 
+@app.route('/temp')
+def temp():
+	users = db.session.query(Attendee).all()
+	for attendee in users:
+		attendee.first_name = attendee.first_name.lower()
+		attendee.last_name = attendee.last_name.lower()
+	db.session.commit()
+
+	return "done"
+
 @app.route('/user/changepassword', methods = ['GET', 'POST'])
 @login_required
 def change_password():
