@@ -8,6 +8,17 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
+yearMap = {
+	1: "freshman",
+	2: "sophomore",
+	3: "junior",
+	4: "senior",
+	5: "other"
+}
+
+invertYearMap = { v: k for k, v in yearMap.items()}
+
 """ User """
 class User(Base):
 	__tablename__ = 'leader'
@@ -124,26 +135,56 @@ class SmallGroupEventAttendance(Base):
 		self.attendee_id = attendee_id
 
 if __name__ == '__main__':
-	from datetime import timedelta
-
 	from sqlalchemy import create_engine
 	from sqlalchemy.orm import sessionmaker
 
 	PWD = os.path.abspath(os.curdir)
 
-	SQLALCHEMY_DATABASE_URI = 'postgres://PhilipHouse:house@localhost/arkaios'
+	#SQLALCHEMY_DATABASE_URI = 'postgres://PhilipHouse:house@localhost/arkaios'
+	SQLALCHEMY_DATABASE_URI = 'postgres://gtwnxaeulqztlh:Af5wrfurq510fqonyoFiZryaFg@ec2-54-197-241-91.compute-1.amazonaws.com:5432/d5uaju8veb38j0'
+
 	#location = os.environ['DATABASE_URL']
 	location = SQLALCHEMY_DATABASE_URI
 
 	engine = create_engine(location, echo=True)
 
-	Base.metadata.create_all(engine)
+	#Base.metadata.create_all(engine)
 	Session = sessionmaker(bind=engine)
 	session = Session()
 
-	# Add a sample user
-	user = User(name='Philip House', password="test", scope=int(0))
-	largegroup = LargeGroup(name='TestFocus', weekNumber=1, quarter="w14")
-	session.add(largegroup)
-	session.add(user)
-	session.commit()
+	# # Add a sample user
+	# user = User(name='Philip House', password="test", scope=int(0))
+	# largegroup = LargeGroup(name='TestFocus', weekNumber=1, quarter="w14")
+	# session.add(largegroup)
+	# session.add(user)
+	# session.commit()
+
+	# DO NOT RUN IF YOU DON"T WANT TO INCREMENT YEAR PLEASE
+
+	attendees = session.query(Attendee).all()
+	print attendees
+	failure = False
+	for attendee in attendees:
+		if failure:
+			break
+		try:
+			if attendee.year in invertYearMap:
+				# valid key, proceed normally
+				currentInt = int(invertYearMap[attendee.year])
+				currentInt += 1
+
+				if currentInt in yearMap:
+					print yearMap[currentInt]
+					attendee.year = yearMap[currentInt]
+				else:
+					attendee.year = 'other'
+			else:
+				attendee.year = 'other'
+		except Exception as e:
+			print e
+			failure = True
+
+	if not failure:
+		session.commit()
+	else:
+		print "failure"

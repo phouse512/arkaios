@@ -313,18 +313,17 @@ def large_group_attendance_search():
 	inputFirstName = request.args.get('firstName')
 	inputLastName = request.args.get('lastName')
 	inputEmail = request.args.get('email')
-	inputDorm = request.args.get('dorm')
+	#inputDorm = request.args.get('dorm')
 	inputYear = request.args.get('year')
 
 	sql = helpers.searchConstruction({'first_name': inputFirstName, 'last_name': inputLastName, 
-			'email': inputEmail, 'dorm': inputDorm, 'year': inputYear})
+			'email': inputEmail, 'year': inputYear})
 	query = db.session.query(Attendee).filter(eval(sql)).limit(8);
 	
 	output = []
 	for record in query:
 		output.append(json.dumps({'id': record.id, 'firstname': record.first_name, 
-				'lastname': record.last_name, 'year': record.year, 'dorm': record.dorm, 
-				'email': record.email}))
+				'lastname': record.last_name, 'year': record.year, 'email': record.email}))
 
 	return jsonify(results=output)
 

@@ -38,7 +38,7 @@ function submitClick(){
 		firstName: $('#firstName').val().toLowerCase(),
         lastName: $('#lastName').val().toLowerCase(),
         email: $('#email').val().toLowerCase(),
-        dorm: $('#dorm').val(),
+        dorm: 'don\'t matter',
         year: $('select').val(),
         quarter: $('#quarter').html(),
         week: $('#week').html()
@@ -64,7 +64,7 @@ function searchUsers(){
 		firstName: $.trim($('#firstName').val().toLowerCase()),
 		lastName: $.trim($('#lastName').val().toLowerCase()),
 		email: $.trim($("#email").val().toLowerCase()),
-		dorm: $.trim($("#dorm").val()),
+		//dorm: $.trim($("#dorm").val()),
 		year: $('select').val()
 	}, function(data) {
 		updateSuggestions(data);
@@ -91,7 +91,7 @@ function updateSuggestionsListener(){
 // listens to a user clicking on a suggested user
 function autoSuggestClickListener(object){
 	$(object).on('click', function(){
-		$("#dorm").val($(this).children('input[name="dorm"]').val());
+		//$("#dorm").val($(this).children('input[name="dorm"]').val());
 		$("#email").val($(this).children('input[name="email"]').val());
 		$("#firstName").val(firstName = $(this).children('.firstname').html());
 		$("#lastName").val($(this).children('.lastname').html());
