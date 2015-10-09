@@ -142,6 +142,19 @@ def large_group_manage():
 
 	return render_template('largegroup/manage.html', f14=fall2014, w15=winter2015, s15=spring2015)
 
+@app.route('/admin/focus')
+def focus_select():
+	fall2015 = [0]*10
+	winter2016 = [0]*10
+	spring2016 = [0]*10
+
+	for i in range(10):
+		fall2015[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='f15').join(LargeGroup.large_group_attendance).count()
+		winter2016[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='w16').join(LargeGroup.large_group_attendance).count()
+		spring2016[i] = db.session.query(LargeGroup).filter_by(weekNumber=i+1).filter_by(quarter='s16').join(LargeGroup.large_group_attendance).count()
+
+	return render_template('largegroup/selector.html', f15=fall2015, w16=winter2016, s16=spring2016)
+
 # Large Group Attendance Page
 @app.route('/admin/large-group/<event_data>')
 def large_group_attendance_admin(event_data):
@@ -150,6 +163,21 @@ def large_group_attendance_admin(event_data):
 	#week = event_data.split("-")[1][1:]
 
 	return render_template('largegroup/attendance.html', event_data=quarter)
+
+@app.route('/admin/focus/<quarter>/<week>')
+def event_attendance(quarter, week):
+	week = int(week)
+	quarter = str(quarter)
+	try:
+		event_id = db.session.query(LargeGroup).filter_by(weekNumber=week).filter_by(quarter=quarter).first().id
+	except AttributeError:
+		# no event was found - display nothing yo
+		return "bad request...sorry :( please go back and tell phil something is wrong.."
+
+
+	attendance_records = db.session.query(LargeGroupAttendance).filter_by(large_group_id=event_id).join(LargeGroupAttendance.attendee)
+	return render_template('largegroup/event.html', attendance=attendance_records, quarter=quarter, week=week)
+
 
 # Large Group Attendance Data AJAX call
 @app.route('/admin/large-group/_get_event_table')
@@ -538,5 +566,5 @@ def change_password():
 			return redirect(url_for('family_group_overview'))
 		return redirect(url_for('family_group_leader_manage', fg_id=g.user.scope))
 	elif(form.errors):
-		flash((form.errors))
+	    flash((form.errors))
 	return render_template('smallgroup/change_password.html', form=form, user=g.user)

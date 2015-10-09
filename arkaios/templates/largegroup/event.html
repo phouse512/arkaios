@@ -1,0 +1,42 @@
+
+
+{% extends 'simple_base.html' %}
+
+{% block content %}
+	<div  class="col-lg-10 col-lg-offset-1 col-md-offset-1 col-md-9">
+        <h3>Quarter: {{ quarter}}   -  Week: {{ week }}</h3>
+
+		<div style="margin-top: 50px;" class="row">
+            <table id="attendanceTable" class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>last name</th>
+                        <th>first name</th>
+                        <th>email</th>
+                        <th>dorm</th>
+                        <th>year</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in attendance %}
+                    <tr class="{% if user.first_time == 1 %}info{% endif %}">
+                        <td>1</td>
+                        <td>{{ user.attendee.last_name }}</td>
+                        <td>{{ user.attendee.first_name }}</td>
+                        <td>{{ user.attendee.email }}</td>
+                        <td>{{ user.attendee.dorm }}</td>
+                        <td>{{ user.attendee.year }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+		</div>
+	</div>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#attendanceTable").dynatable();
+        });
+    </script>
+{% endblock content %}

@@ -1,0 +1,41 @@
+{% extends 'simple_base.html' %}
+
+{% block content %}
+	<div  class="col-lg-10 col-lg-offset-2 col-md-9 col-md-offset-3">
+		<div style="margin-top: 50px;" class="row">
+			<div style="margin-top: 25px;" class="col-lg-3 col-md-3">
+				<h4>Fall 2015</h4>
+				<ul class="list-group">
+					{% for current in range(10) %}
+						<a href="{{ url_for('large_group', event_data='f15-w' ~ (current+1)) }}"class="list-group-item">
+							<span class="badge">{{ f15[current] }} Visitors</span>
+							Week {{ current+1 }}
+						</a>
+					{% endfor %}
+				</ul>
+			</div>
+			<div style="margin-top: 25px;" class="col-lg-3 col-md-3">
+				<h4>Winter 2016</h4>
+				<ul class="list-group">
+					{% for current in range(10) %}
+						<a href="{{ url_for('large_group', event_data='w16-w' ~ (current+1)) }}" class="list-group-item">
+							<span class="badge">{{ w16[current] }} Visitors</span>
+							Week {{ current+1 }}
+						</a>
+					{% endfor %}
+				</ul>
+			</div>
+			<div style="margin-top: 25px;" class="col-lg-3 col-md-3">
+				<h4>Spring 2016</h4>
+				<ul class="list-group">
+					{% for current in range(10) %}
+						<a href="{{ url_for('large_group', event_data='s16-w' ~ (current+1)) }}" class="list-group-item">
+							<span class="badge">{{ s16[current] }} Visitors</span>
+							Week {{ current+1 }}
+						</a>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

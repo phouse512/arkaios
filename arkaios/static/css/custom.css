@@ -165,3 +165,7 @@
   overflow: scroll;
 }
 
+#attendanceTable th tr {
+  color: black;
+}
+

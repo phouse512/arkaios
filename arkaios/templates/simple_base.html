@@ -2,21 +2,23 @@
 <html lang="en">
     <head>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/attendance-style.css') }}" />
-        <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet" />
+        <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.dynatable.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}" />
         <title>{% block title %}{% endblock %}</title>
         <script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/jquery.updatelist.js') }}"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/constants.js') }}"></script>
         <script src="{{ url_for('static', filename='js/source.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/jquery.dynatable.js') }}"></script>
 
 
         <script type=text/javascript>
           $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
           $(document).ready(function(){
-        
+
           });
         </script>
     </head>
@@ -25,14 +27,6 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="#">Arkaios</a>
-                </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li class="{% block active_nav_largegroup %}{% endblock %}"><a href="#">Large Group</a></li>
-                        <li class="{% block active_nav_smallgroup %}{% endblock %}"><a href="#">Small Group</a></li>
-                        <li class="{% block active_nav_analytics %}{% endblock %}"><a href="#">Analytics</a></li>
-                    </ul>
-                    <button type="button" class="btn btn-default navbar-btn pull-right">Sign In</button>
                 </div>
             </div>
         </div>
