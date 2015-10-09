@@ -8,3 +8,5 @@
 .env
 
 .idea
+
+arkaios/config.py

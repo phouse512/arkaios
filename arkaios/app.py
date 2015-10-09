@@ -10,6 +10,7 @@ from arkaios.models import Base, User, LargeGroup, SmallGroup, SmallGroupEvent, 
 from arkaios import config
 from arkaios import helpers
 from forms import EventForm, LoginForm, AttendeeForm, ChangePasswordForm
+from functools import wraps
 
 import csv
 import json
@@ -35,6 +36,28 @@ def before_request():
 @lm.user_loader
 def load_user(id):
 	return db.session.query(User).get(int(id))
+
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    return username == config.ADMIN_US and password == config.ADMIN_PW
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 # add permissions
 @app.route('/admin/large-group/')
@@ -143,6 +166,7 @@ def large_group_manage():
 	return render_template('largegroup/manage.html', f14=fall2014, w15=winter2015, s15=spring2015)
 
 @app.route('/admin/focus')
+@requires_auth
 def focus_select():
 	fall2015 = [0]*10
 	winter2016 = [0]*10
@@ -236,6 +260,7 @@ def large_group_attendance_table_admin():
 
 # Attendance Tracking
 @app.route('/focus/<event_data>')
+@requires_auth
 def large_group(event_data):
 	quarter = event_data.split("-")[0]
 	week = event_data.split("-")[1][1:]

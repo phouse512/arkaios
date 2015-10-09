@@ -13,7 +13,7 @@ th a {
   color: black;
 }
 th a:hover {
-  color: #fff;
+  color: grey;
   text-decoration: underline;
 }
 

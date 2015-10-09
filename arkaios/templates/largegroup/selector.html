@@ -7,10 +7,18 @@
 				<h4>Fall 2015</h4>
 				<ul class="list-group">
 					{% for current in range(10) %}
-						<a href="{{ url_for('large_group', event_data='f15-w' ~ (current+1)) }}"class="list-group-item">
-							<span class="badge">{{ f15[current] }} Visitors</span>
-							Week {{ current+1 }}
-						</a>
+						<li class="list-group-item">
+							<span class="badge">
+								{{ f15[current] }} Visitors
+							</span>
+							<a href="{{ url_for('large_group', event_data='f15-w' ~ (current+1)) }}">
+								Week {{ current+1 }}
+							</a>
+							|
+							<a href="{{ url_for('event_attendance', quarter='f15', week=(current+1)) }}">
+								see data
+							</a>
+						</li>
 					{% endfor %}
 				</ul>
 			</div>
@@ -18,10 +26,18 @@
 				<h4>Winter 2016</h4>
 				<ul class="list-group">
 					{% for current in range(10) %}
-						<a href="{{ url_for('large_group', event_data='w16-w' ~ (current+1)) }}" class="list-group-item">
-							<span class="badge">{{ w16[current] }} Visitors</span>
-							Week {{ current+1 }}
-						</a>
+						<li class="list-group-item">
+							<span class="badge">
+								{{ w16[current] }} Visitors
+							</span>
+							<a href="{{ url_for('large_group', event_data='w16-w' ~ (current+1)) }}">
+								Week {{ current+1 }}
+							</a>
+							|
+							<a href="{{ url_for('event_attendance', quarter='w16', week=(current+1)) }}">
+								see data
+							</a>
+						</li>
 					{% endfor %}
 				</ul>
 			</div>
@@ -29,10 +45,18 @@
 				<h4>Spring 2016</h4>
 				<ul class="list-group">
 					{% for current in range(10) %}
-						<a href="{{ url_for('large_group', event_data='s16-w' ~ (current+1)) }}" class="list-group-item">
-							<span class="badge">{{ s16[current] }} Visitors</span>
-							Week {{ current+1 }}
-						</a>
+						<li class="list-group-item">
+							<span class="badge">
+								{{ s16[current] }} Visitors
+							</span>
+							<a href="{{ url_for('large_group', event_data='s16-w' ~ (current+1)) }}">
+								Week {{ current+1 }}
+							</a>
+							|
+							<a href="{{ url_for('event_attendance', quarter='s16', week=(current+1)) }}">
+								see data
+							</a>
+						</li>
 					{% endfor %}
 				</ul>
 			</div>
