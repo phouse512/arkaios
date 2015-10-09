@@ -7,6 +7,6 @@
 #local env
 .env
 
-.idea
+*.idea
 
 arkaios/config.py
