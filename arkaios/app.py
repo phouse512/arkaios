@@ -125,17 +125,17 @@ def large_group_overview_table_admin():
 			weeks[int(week.weekNumber)-1] = week.id
 		except ValueError,e:
 			print str(e)
-	#print weeks
+	# print weeks
 	userCount, weekCount = 0, 0
 	# iterate through full overview table
 	for user in users:
 		for week in weeks:
 			try:
 				val = db.session.query(LargeGroupAttendance).filter_by(large_group_id=week).filter_by(attendee_id=user.id).first()
-				#first time case
+				# first time case
 				if(val.first_time == 1):
 					attendanceArray[userCount][weekCount] = 2
-				#normal attendee case
+				# normal attendee case
 				elif(val is not None):
 					attendanceArray[userCount][weekCount] = 1
 				# no attendance case
@@ -148,8 +148,82 @@ def large_group_overview_table_admin():
 			weekCount += 1
 		userCount += 1
 		weekCount = 0
-	#print attendanceArray
+	# print attendanceArray
 	return render_template('largegroup/_overview_table.html', attendance=attendanceArray, userInfo=users)
+
+@app.route('/admin/<quarter>/review')
+@requires_auth
+def quarterly_review(quarter):
+	quarter = str(quarter)
+
+	sortingDictionary = {0: Attendee.id, 1: Attendee.year, 2: Attendee.first_name, 3: Attendee.last_name }
+	siftingDictionary = {1: "freshman", 2: "sophomore", 3: "junior", 4: "senior", 5: "other" }
+
+	# get params
+	sort = request.args.get('sort', 0, type=int)
+	sift = request.args.get('sift', 0, type=int)
+
+	weeks = [0 for i in range(10)]
+	if (sift == 0):
+		users = db.session.query(Attendee).order_by(sortingDictionary[sort]).options(load_only("id", "first_name", "last_name", "year"))
+		userCount = db.session.query(Attendee).order_by(sortingDictionary[sort]).options(load_only("id", "first_name", "last_name", "year")).count()
+	else:
+		users = db.session.query(Attendee).filter_by(year=siftingDictionary[sift]).order_by(sortingDictionary[sort]).options(load_only("id", "first_name", "last_name", "year"))
+		userCount = db.session.query(Attendee).filter_by(year=siftingDictionary[sift]).order_by(sortingDictionary[sort]).options(load_only("id", "first_name", "last_name", "year")).count()
+
+	attendanceArray = [[0 for i in range(10)] for j in range(userCount)]
+	sumArray = [0 for i in range(userCount)]
+	weekDB = db.session.query(LargeGroup).filter_by(quarter=quarter).options(load_only("id"))
+
+	# set up full quarter week array with db ID's if exists, 0 otherwise
+	for week in weekDB:
+		try:
+			weeks[int(week.weekNumber)-1] = week.id
+		except ValueError,e:
+			print str(e)
+	# print weeks
+	userCount, weekCount = 0, 0
+	# iterate through full overview table
+
+	for user in users:
+		for week in weeks:
+			try:
+				val = db.session.query(LargeGroupAttendance).filter_by(large_group_id=week).filter_by(attendee_id=user.id).first()
+				# first time case
+				if val.first_time == 1:
+					attendanceArray[userCount][weekCount] = 2
+					sumArray[userCount] += 1
+				# normal attendee case
+				elif val is not None:
+					attendanceArray[userCount][weekCount] = 1
+					sumArray[userCount] += 1
+				# no attendance case
+				else:
+					attendanceArray[userCount][weekCount] = 0
+			except AttributeError,e:
+				# if doesn't exist, assume no attendance
+				print str(e)
+				attendanceArray[userCount][weekCount] = 0
+			weekCount += 1
+		userCount += 1
+		weekCount = 0
+
+	# first create
+	fullArray = [1]
+	columnDescription = ["Name", "Year", "Total Quarterly Attendance"]
+	fullArray[0] = columnDescription
+
+	for i in range(len(sumArray)):
+		if sumArray[i] > 0:
+			temp = [users[i].first_name + " " + users[i].last_name, users[i].year, str(sumArray[i])]
+			fullArray.append(temp)
+
+	def generate():
+		for row in fullArray:
+			yield ','.join(row) + '\n'
+
+	return Response(generate(), mimetype='text/csv', headers={"Content-Disposition":"attachment;filename=quarter_" + quarter + "_review.csv"})
+
 
 # Large group manage - collect record counts
 @app.route('/admin/large-group/manage')
